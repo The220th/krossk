@@ -6,7 +6,9 @@ Transfer encrypted msgs CROSS unsafe messengers.
 
 Если будет использоваться функционал gpg, то нужно установить gpg.
 
-- GNU/linux: `> sudo apt install gpg`, `sudo pacman -S gnupg`.
+- GNU/linux: `> sudo apt install gnupg`, `sudo pacman -S gnupg`.
+
+- Windows: [https://gnupg.org/download/](https://gnupg.org/download/).
 
 ``` bash
 > python -m ensurepip --upgrade # установка pip, если его нет
