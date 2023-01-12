@@ -99,7 +99,7 @@ def check_passphrase_is_strong(passphrase: str) -> bool:
         if(c in string.digits):
             digits = True
         if(c in ".,!@#$%^&*)(-_+=?/"):
-            digits = True
+            symbols = True
 
     if(False in [lower, upper, digits, symbols]):
         return False
