@@ -4,7 +4,7 @@ import sys
 
 from PyQt5.QtWidgets import QApplication
 
-from krossk_gui import MainWidget
+from krossk_gui import MainWidget, ico_get_main
 
 
 
@@ -13,5 +13,7 @@ if __name__ == '__main__':
 
     mainWidget = MainWidget()
     mainWidget.setWindowTitle("filecryptodisk")
+
+    mainWidget.setWindowIcon(ico_get_main())
 
     sys.exit(app.exec_())
