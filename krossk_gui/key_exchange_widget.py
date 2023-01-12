@@ -111,30 +111,40 @@ class KeyExchangeWidget(QWidget):
             out_text_warn_msg += "and digits (\"123\"...) and symbols (\"?!%\"...)"
             ifMsg(self, out_text_warn_msg, 3)
         
-        key_hash = calc_hash(key_text)
-        #self.__encrypted_shakey_text_out.setText(key_hash)
-        self.__key_text_out2.setText(key_hash)
-        key_text_m = bytes_to_int(   utf8_to_bytes(key_hash)   )
-        key_int_en = RSA4096_encrypt(pubKey_text, key_text_m)
-        if(key_int_en == None):
-            ifMsg(self, "Cannot encrypt! Invalid key?", 4)
-            return
-        #bs64 = Base64()
-        #key_text_en = bs64.encode( int_to_bytes(key_int_en) )
-        key_text_en = str(key_int_en)
+        try:
+            key_hash = calc_hash(key_text)
+            #self.__encrypted_shakey_text_out.setText(key_hash)
+            self.__key_text_out2.setText(key_hash)
+            key_text_m = bytes_to_int(   utf8_to_bytes(key_hash)   )
+            key_int_en = RSA4096_encrypt(pubKey_text, key_text_m)
+            if(key_int_en == None):
+                ifMsg(self, "Cannot encrypt! Invalid key?", 4)
+                return
+            bs64 = Base64()
+            key_text_en = bs64.encode( int_to_bytes(key_int_en) )
+            #key_text_en = str(key_int_en)
 
-        self.__encrypted_key_text_out.setText(key_text_en)
+            self.__encrypted_key_text_out.setText(key_text_en)
+        except:
+            ifMsg(self, "Error! ", 4)
+            return
 
     def __deKeys_button_handler(self):
         en_key_text = self.__encrypted_key_text_in.text()
         if(en_key_text == ""):
             ifMsg(self, "Encrypted passphrase is empty. Please fill it", 4)
             return
-        #bs64 = Base64()
-        #m = bytes_to_int(  bs64.decode(en_key_text)  )
-        m = int(en_key_text)
-        
-        key_m = self.__rsa4096cipher.decrypt(m)
-        res = bytes_to_utf8(   int_to_bytes(key_m)   )
-        self.__key_text_out1.setText(res)
-        
+        try:
+            bs64 = Base64()
+            m = bytes_to_int(  bs64.decode(en_key_text)  )
+            #m = int(en_key_text)
+            
+            key_m = self.__rsa4096cipher.decrypt(m)
+            if(key_m == None):
+                ifMsg(self, "Cannot encrypt! Invalid key?", 4)
+                return
+            res = bytes_to_utf8(   int_to_bytes(key_m)   )
+            self.__key_text_out1.setText(res)
+        except:
+            ifMsg(self, "Error! ", 4)
+            return
