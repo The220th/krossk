@@ -2,3 +2,4 @@ pycrypto
 pycryptodome
 pyqt5
 hashlib
+Pillow

@@ -5,8 +5,12 @@ import os
 
 sys.path.insert(0, os.path.abspath("../krossk_crypto"))
 
-from .test import test_import
+from .common import ifMsg, PasswordWidget
+from .key_exchange_widget import KeyExchangeWidget
+from .main_widget import MainWidget
 
 __all__ = [
-    "test_import"
+    "ifMsg", "PasswordWidget",
+    "MainWidget",
+    "KeyExchangeWidget"
     ]

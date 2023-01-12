@@ -3,7 +3,7 @@
 import random
 import sys
 
-
+from . import Base64, bytes_to_int, int_to_bytes
 
 def getNum(n: int) -> int:
     '''get n-bit number'''
@@ -108,11 +108,14 @@ def getPrime_pycrypto(n: int):
     from Crypto.Util import number as nbgen
     return nbgen.getPrime(n)
 
-def bytes_to_int(b_arr: bytes) -> int:
-    # int.from_bytes(b'\x00\x01', "big")
-    return int.from_bytes(b_arr, "big")
-
-
+def RSA4096_encrypt(pub_key: str, m: int) -> int:
+    b64 = Base64()
+    e_str, n_str = pub_key.split("_")
+    e = bytes_to_int(b64.decode(e_str))
+    ne = bytes_to_int(b64.decode(n_str))
+    if(ne > m):
+        return pow(m, e, ne)
+    return None
 
 class RSA4096:
 
@@ -139,7 +142,11 @@ class RSA4096:
 
     def get_pub_key(self) -> tuple:
         '''(e, n)'''
-        return self.__pub_key
+        # return self.__pub_key
+        b64 = Base64()
+        e_str = b64.encode(int_to_bytes(self.__pub_key[0]))
+        n_str = b64.encode(int_to_bytes(self.__pub_key[1]))
+        return e_str + "_" + n_str
 
     def encrypt(self, m: int) -> int:
         e = self.__pub_key[0]
