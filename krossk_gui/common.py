@@ -66,8 +66,11 @@ class PasswordWidget(QWidget):
 
         self.setLayout(self.__grid)
     
-    def get_password(self):
+    def get_password(self) -> str:
         return self.__password_text.text()
+
+    def set_password(self, pswd: str):
+        self.__password_text.setText(pswd)
 
     def __passwd_echo_checkbox_handler(self):
         if(self.__passwd_echo_checkbox.isChecked() == False):
@@ -78,7 +81,37 @@ class PasswordWidget(QWidget):
     def __rnd_passwd_button_handler(self):
         self.__password_text.setText(gen_password())
 
+class HiddenLineEditWidget(QWidget):
 
+    def __init__(self, parent):
+        super().__init__(parent)
+
+        self.__grid = QGridLayout()
+
+        self.__hidden_text = QLineEdit(self)
+        self.__hidden_text.setReadOnly(False)
+        self.__hidden_text.setEchoMode(QLineEdit.Password)
+
+        self.__passwd_echo_checkbox = QCheckBox("Show", self)
+        self.__passwd_echo_checkbox.setChecked(False)
+        self.__passwd_echo_checkbox.toggled.connect(lambda:self.__passwd_echo_checkbox_handler())
+
+        self.__grid.addWidget(self.__hidden_text, 0, 0, 1, 1)
+        self.__grid.addWidget(self.__passwd_echo_checkbox, 0, 1, 1, 1)
+
+        self.setLayout(self.__grid)
+    
+    def get_text(self) -> str:
+        return self.__hidden_text.text()
+    
+    def set_text(self, txt: str):
+        self.__hidden_text.setText(txt)
+
+    def __passwd_echo_checkbox_handler(self):
+        if(self.__passwd_echo_checkbox.isChecked() == False):
+            self.__hidden_text.setEchoMode(QLineEdit.Password)
+        else:
+            self.__hidden_text.setEchoMode(QLineEdit.Normal)
 
 
 

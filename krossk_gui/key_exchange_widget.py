@@ -4,7 +4,7 @@ from PyQt5 import (QtCore, QtGui)
 from PyQt5.QtWidgets import (QWidget, QLabel, QCheckBox, QTextEdit, QLineEdit, QPushButton,
     QFrame, QApplication, QMessageBox, QGridLayout, QComboBox, QFileDialog, QStackedWidget)
 
-from . import ifMsg, PasswordWidget
+from . import ifMsg, PasswordWidget, HiddenLineEditWidget
 
 from krossk_crypto import RSA4096, RSA4096_encrypt, utf8_to_bytes, bytes_to_utf8, Base64
 from krossk_crypto import bytes_to_int, int_to_bytes, calc_hash, check_passphrase_is_strong, gen_password
@@ -14,10 +14,10 @@ class KeyExchangeWidget(QWidget):
     def __init__(self, parent):
         super().__init__(parent)
 
+        self.__mainWidget = parent
+
         self.__grid = QGridLayout()
         self.__grid.setHorizontalSpacing(25)
-
-        self.__label_test = QLabel("", self)
 
         self.__genKeys_button = QPushButton("Generate keys \n(long process)", self)
         self.__genKeys_button.clicked.connect(lambda:self.__genKeys_button_handler())
@@ -33,15 +33,13 @@ class KeyExchangeWidget(QWidget):
         #self.__encrypted_shakey_text_out.setReadOnly(True)
         self.__encrypted_key_text_out = QLineEdit(self)
         self.__encrypted_key_text_out.setReadOnly(True)
-        self.__key_text_out2 = QLineEdit(self)
-        self.__key_text_out2.setReadOnly(True)
+        self.__key_text_out2 = HiddenLineEditWidget(self)
 
         self.__encrypted_key_text_in = QLineEdit(self)
         self.__encrypted_key_text_in.setReadOnly(False)
         self.__deKeys_button = QPushButton("Form key", self)
         self.__deKeys_button.clicked.connect(lambda:self.__deKeys_button_handler())   
-        self.__key_text_out1 = QLineEdit(self)
-        self.__key_text_out1.setReadOnly(True)
+        self.__key_text_out1 = HiddenLineEditWidget(self)
 
 
 
@@ -114,7 +112,8 @@ class KeyExchangeWidget(QWidget):
         try:
             key_hash = calc_hash(key_text)
             #self.__encrypted_shakey_text_out.setText(key_hash)
-            self.__key_text_out2.setText(key_hash)
+            self.__key_text_out2.set_text(key_hash)
+            self.__mainWidget.get_SymmetricCommunicationWidget().setPassphrase_ifEmpty(key_hash)
             key_text_m = bytes_to_int(   utf8_to_bytes(key_hash)   )
             key_int_en = RSA4096_encrypt(pubKey_text, key_text_m)
             if(key_int_en == None):
@@ -144,7 +143,8 @@ class KeyExchangeWidget(QWidget):
                 ifMsg(self, "Cannot encrypt! Invalid key?", 4)
                 return
             res = bytes_to_utf8(   int_to_bytes(key_m)   )
-            self.__key_text_out1.setText(res)
+            self.__key_text_out1.set_text(res)
+            self.__mainWidget.get_SymmetricCommunicationWidget().setPassphrase_ifEmpty(res)
         except:
             ifMsg(self, "Error! ", 4)
             return
