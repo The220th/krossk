@@ -102,18 +102,11 @@ class gpg_cipher(ICipher):
         else:
             print_gpg_error(com_out)
             raise RuntimeError("GPG ERROR. Invalid key?")
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+    
+    def check_gpg_insystem_exists(self):
+        command = "gpg --version"
+        com_out = exe(command)
+        if(com_out[0].find("gpg (GnuPG)") != -1):
+            return True
+        else:
+            return False

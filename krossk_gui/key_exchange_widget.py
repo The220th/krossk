@@ -7,7 +7,7 @@ from PyQt5.QtWidgets import (QWidget, QLabel, QCheckBox, QTextEdit, QLineEdit, Q
 from . import ifMsg, PasswordWidget, HiddenLineEditWidget
 
 from krossk_crypto import RSA4096, RSA4096_encrypt, utf8_to_bytes, bytes_to_utf8, Base64
-from krossk_crypto import bytes_to_int, int_to_bytes, calc_hash, check_passphrase_is_strong, gen_password
+from krossk_crypto import bytes_to_int, int_to_bytes, calc_hash, check_passphrase_is_strong
 
 class KeyExchangeWidget(QWidget):
 
@@ -124,6 +124,8 @@ class KeyExchangeWidget(QWidget):
 
             self.__encrypted_key_text_out.setText(key_text_en)
         except:
+            import traceback
+            traceback.print_stack()
             ifMsg(self, "Error! ", 4)
             return
 
@@ -144,5 +146,7 @@ class KeyExchangeWidget(QWidget):
             res = bytes_to_utf8(   int_to_bytes(key_m)   )
             self.__key_text_out1.set_text(res)
         except:
+            import traceback
+            traceback.print_stack()
             ifMsg(self, "Error! ", 4)
             return
