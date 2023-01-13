@@ -113,7 +113,6 @@ class KeyExchangeWidget(QWidget):
             key_hash = calc_hash(key_text)
             #self.__encrypted_shakey_text_out.setText(key_hash)
             self.__key_text_out2.set_text(key_hash)
-            self.__mainWidget.get_SymmetricCommunicationWidget().setPassphrase_ifEmpty(key_hash)
             key_text_m = bytes_to_int(   utf8_to_bytes(key_hash)   )
             key_int_en = RSA4096_encrypt(pubKey_text, key_text_m)
             if(key_int_en == None):
@@ -144,7 +143,6 @@ class KeyExchangeWidget(QWidget):
                 return
             res = bytes_to_utf8(   int_to_bytes(key_m)   )
             self.__key_text_out1.set_text(res)
-            self.__mainWidget.get_SymmetricCommunicationWidget().setPassphrase_ifEmpty(res)
         except:
             ifMsg(self, "Error! ", 4)
             return

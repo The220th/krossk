@@ -33,10 +33,7 @@ class MainWidget(QWidget):
 
         self.show()
 
-    def get_SymmetricCommunicationWidget(self) -> "SymmetricCommunicationWidget":
-        return self.__symmetric_communication_widget
-
-    def __widgetsSelectComboActivated(self, text : str):
+    def __widgetsSelectComboActivated(self, text: str):
         i = 0
         for var_i in self.__variantsToChoose:
             if(text == var_i):
