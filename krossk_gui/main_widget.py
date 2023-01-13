@@ -4,11 +4,11 @@ from PyQt5 import (QtCore, QtGui)
 from PyQt5.QtWidgets import (QWidget, QLabel, QCheckBox, QTextEdit, QLineEdit, QPushButton,
     QFrame, QApplication, QMessageBox, QGridLayout, QComboBox, QFileDialog, QStackedWidget)
 
-from . import KeyExchangeWidget, SymmetricCommunicationWidget
+from . import KeyExchangeWidget, SymmetricCommunicationWidget, FileTransferWidget
 
 class MainWidget(QWidget):
 
-    __variantsToChoose = ["Key exchange", "Symmetric communication"]
+    __variantsToChoose = ["Key exchange", "Symmetric communication", "Encrypt/decrypt file"]
 
     def __init__(self):
         super().__init__()
@@ -17,10 +17,12 @@ class MainWidget(QWidget):
 
         self.__key_exchange_widget = KeyExchangeWidget(self)
         self.__symmetric_communication_widget = SymmetricCommunicationWidget(self)
+        self.__file_transfer_widget = FileTransferWidget(self)
 
         self.__stackedWidget = QStackedWidget(self)
         self.__stackedWidget.addWidget(self.__key_exchange_widget)
         self.__stackedWidget.addWidget(self.__symmetric_communication_widget)
+        self.__stackedWidget.addWidget(self.__file_transfer_widget)
 
         self.__widgetsSelectCombo = QComboBox(self)
         self.__widgetsSelectCombo.addItems(self.__variantsToChoose)
