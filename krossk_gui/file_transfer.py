@@ -16,13 +16,14 @@ def thread_func(parent: "QWidget", cipher: "ICipher", ENCRYPT_DECRYPT: bool, pat
     try:
         if(ENCRYPT_DECRYPT == False):
             cipher.encrypt_file(path_src, path_dest)
+            ifMsg(None, f"Finished.\n\nFile \"{path_src}\"\n encrypted\n to \"{path_dest}\". ", 2)
         else:
             cipher.decrypt_file(path_src, path_dest)
-        ifMsg(None, f"Finished.\n\nFile \"{path_src}\"\n encrypted/decrypted\n to \"{path_dest}\". ", 2)
+            ifMsg(None, f"Finished.\n\nFile \"{path_src}\"\n decrypted\n to \"{path_dest}\". ", 2)
     except:
         import traceback
         print(traceback.format_exc())
-        ifMsg(None, "Cannot encrypt/decrypt file! ", 4)
+        ifMsg(None, "Cannot encrypt/decrypt file! \nInvalid key or file?", 4)
     parent.set_en_de_Mutex(False)
 
 class FileTransferWidget(QWidget):
@@ -165,13 +166,63 @@ class FileTransferWidget(QWidget):
                 
                 x = threading.Thread(target=thread_func, args=(self, cipher, False, path_in, path_out,))
                 x.start()
-                ifMsg(self, f"File {path_in} started ecrypted to {path_in}. It may take some time...", 2)
+                ifMsg(self, f"File {path_in} started ecrypted to {path_out}. It may take some time...", 2)
 
             except:
                 import traceback
                 print(traceback.format_exc())
                 ifMsg(self, "Cannot encrypt! ", 4)
-                self.__xcrypt_button_mutex == False
+                self.set_en_de_Mutex(False)
 
     def __decrypt_button_handler(self):
-        pass # dont forget try/catch
+        if(self.__xcrypt_button_mutex == True):
+            ifMsg(self, f"File \"{self.__last_filename_src}\" is still being {self.cipher_mode} \nto \"{self.__last_filename_dest}\"... \nWait please", 2)
+            return
+        else:
+            self.set_en_de_Mutex(True)
+            try:
+                path_in = self.__file_src_text.text()
+                path_out = self.__file_dest_text.text()
+                if(os.path.isfile(path_in) != True):
+                    ifMsg(self, f"\"{path_in}\" is not file. ", 4)
+                    self.set_en_de_Mutex(False)
+                    return
+                if(os.path.isdir(path_out) == True):
+                    ifMsg(self, f"\"{path_out}\" is dirrectory", 4)
+                    self.set_en_de_Mutex(False)
+                    return
+                path_in = os.path.abspath(path_in)
+                path_out = os.path.abspath(path_out)
+                self.__last_filename_src, self.__last_filename_dest, self.cipher_mode = path_in, path_out, "encrypted"
+
+                cipher_key = self.__pswd.get_password()
+                if(cipher_key == ""):
+                    ifMsg(self, "Fill passphrase", 4)
+                    self.set_en_de_Mutex(False)
+                    return
+                if(check_passphrase_is_strong(cipher_key) == False):
+                    out_text_warn_msg = "Your passphrase is not strong. \n"
+                    out_text_warn_msg += "Passphrase must be long and \n"
+                    out_text_warn_msg += "use in passphrase upper letters (\"ABC\"...) and lower letters (\"abc\"...) "
+                    out_text_warn_msg += "and digits (\"123\"...) and symbols (\"?!%\"...)"
+                    ifMsg(self, out_text_warn_msg, 3)
+                
+                cipher_combo_text = self.__ciphers_combo.currentText()
+                if(cipher_combo_text == self.__ciphers_list[0]):
+                    cipher = Pyca_Fernet(cipher_key)
+                elif(cipher_combo_text == self.__ciphers_list[1]):
+                    cipher = gpg_cipher(cipher_key)
+                else:
+                    ifMsg(self, "Failed successfully. ", 4)
+                    self.set_en_de_Mutex(False)
+                    return
+                
+                x = threading.Thread(target=thread_func, args=(self, cipher, True, path_in, path_out,))
+                x.start()
+                ifMsg(self, f"File {path_in} started derypted to {path_out}. It may take some time...", 2)
+
+            except:
+                import traceback
+                print(traceback.format_exc())
+                ifMsg(self, "Cannot encrypt! ", 4)
+                self.set_en_de_Mutex(False)

@@ -64,6 +64,6 @@ class Pyca_Fernet(object):
                 block_size = bytes_to_int(fd_in.read(8))
                 block = fd_in.read(block_size)
                 i += block_size + 8
-                block_de = self.__cipher.decrypt(block)
+                block_de = self.__f.decrypt(block)
                 fd_out.write(block_de)
             fd_out.flush()

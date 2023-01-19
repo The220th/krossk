@@ -7,7 +7,7 @@ from PyQt5.QtWidgets import (QWidget, QLabel, QCheckBox, QTextEdit, QLineEdit, Q
 from . import ifMsg, PasswordWidget, HiddenLineEditWidget
 
 from krossk_crypto import kRSA4096, RSA4096_encrypt, utf8_to_bytes, bytes_to_utf8, Base64
-from krossk_crypto import bytes_to_int, int_to_bytes, calc_hash, check_passphrase_is_strong
+from krossk_crypto import bytes_to_int, int_to_bytes, calc_hash_512, check_passphrase_is_strong
 
 from cryptography.hazmat.primitives.asymmetric.x448 import X448PublicKey
 from cryptography.hazmat.primitives.asymmetric.x448 import X448PrivateKey
@@ -219,9 +219,11 @@ class one_KeyExchangeWidget(QWidget):
                 shared_key = privkey2.exchange(pubkey1)
                 self.__key_text_out2.set_text(base64.b64encode(shared_key).decode("ascii"))
             elif(self.__algo_num == 2):
-                key_hash = calc_hash(key_text)
-                self.__key_text_out2.set_text(key_hash)
-                key_text_m = bytes_to_int(   utf8_to_bytes(key_hash)   )
+                key_hash = calc_hash_512(key_text)[1]
+                #self.__key_text_out2.set_text(key_hash)
+                self.__key_text_out2.set_text(base64.b64encode(key_hash).decode("ascii"))
+                #key_text_m = bytes_to_int(   utf8_to_bytes(key_hash)   )
+                key_text_m = bytes_to_int(   key_hash   )
                 key_int_en = RSA4096_encrypt(pubKey_text, key_text_m)
                 if(key_int_en == None):
                     ifMsg(self, "Cannot encrypt! Invalid key?", 4)
@@ -260,7 +262,8 @@ class one_KeyExchangeWidget(QWidget):
                 if(key_m == None):
                     ifMsg(self, "Cannot encrypt! Invalid key?", 4)
                     return
-                res = bytes_to_utf8(   int_to_bytes(key_m)   )
+                #res = bytes_to_utf8(   int_to_bytes(key_m)   )
+                res = base64.b64encode(  int_to_bytes(key_m)  ).decode("ascii")
                 self.__key_text_out1.set_text(res)
             else:
                 ifMsg(self, "Failed successfully", 4)

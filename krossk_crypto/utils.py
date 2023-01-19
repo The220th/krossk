@@ -20,13 +20,30 @@ def int_to_bytes(a: int, bytesLen: int = None) -> bytes:
     else:
         return a.to_bytes(bytesLen, "big")
 
-def calc_hash(x: "bytes or str") -> str:
+def calc_hash(x: bytes or str) -> str:
     if(type(x) == bytes):
         return hashlib.sha256(x).hexdigest()
     elif(type(x) == str):
         return hashlib.sha256( utf8_to_bytes(x) ).hexdigest()
     else:
         raise AttributeError(f"Cannot cal hash of {type(x)}: \"{x}\". ")
+
+def calc_hash_512(x: bytes or str) -> (str, bytes):
+    if(type(x) == bytes):
+        buff = hashlib.sha512(x)
+        return (buff.hexdigest(), buff.digest())
+    elif(type(x) == str):
+        buff = hashlib.sha512( utf8_to_bytes(x) )
+        return (buff.hexdigest(), buff.digest())
+    else:
+        raise AttributeError(f"Cannot cal hash of {type(x)}: \"{x}\". ")
+
+def calc_hash_file(file_path: str) -> str:
+    hash_sha256 = hashlib.sha256()
+    with open(file_path, "rb") as f:
+        for chunk in iter(lambda: f.read(4096), b""):
+            hash_sha256.update(chunk)
+    return hash_sha256.hexdigest()
 
 class Base64(object):
     # https://gist.github.com/trondhumbor/ce57c0c2816bb45a8fbb
@@ -82,7 +99,7 @@ def getRandomString(lenght : int = 20) -> str:
 
 def gen_password() -> str:
     while(True):
-        len_i = random.randint(20, 40)
+        len_i = random.randint(30, 64)
         S = ''.join(random.choices(string.ascii_lowercase + string.ascii_uppercase + string.digits + ".,!@#$%^&*)(-_+=?/", k=len_i))
         if(check_passphrase_is_strong(S) == True):
             break

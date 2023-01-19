@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from .utils import Base64, bytes_to_int, int_to_bytes, calc_hash, utf8_to_bytes, bytes_to_utf8
+from .utils import Base64, bytes_to_int, int_to_bytes, calc_hash, calc_hash_512, calc_hash_file, utf8_to_bytes, bytes_to_utf8
 from .utils import getRandomString, gen_password, check_passphrase_is_strong
 
 from .ICipher import ICipher
@@ -15,6 +15,6 @@ __all__ = [
     #"pycrypto_cipher",
     "Pyca_Fernet",
     "kRSA4096", "RSA4096_encrypt"
-    "Base64", "bytes_to_int", "int_to_bytes", "calc_hash", "utf8_to_bytes", "bytes_to_utf8",
+    "Base64", "bytes_to_int", "int_to_bytes", "calc_hash", "calc_hash_512", "calc_hash_file", "utf8_to_bytes", "bytes_to_utf8",
     "getRandomString", "gen_password", "check_passphrase_is_strong"
     ]

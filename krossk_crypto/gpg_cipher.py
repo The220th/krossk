@@ -99,11 +99,12 @@ class gpg_cipher(ICipher):
         print(*command_out)
 
         com_out = exe(command, "", False)
-        if(com_out[0] == ""):
+        print(com_out)
+        if(com_out[1].find("failed") == -1):
             print("gpg decrypt file: ok")
         else:
             print_gpg_error(com_out)
-            raise RuntimeError("GPG ERROR. Invalid key?")
+            raise RuntimeError("GPG ERROR. Invalid key or file?")
     
     def check_gpg_insystem_exists(self):
         try:
