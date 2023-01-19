@@ -7,7 +7,7 @@ from PyQt5.QtWidgets import QApplication
 from krossk_gui import MainWidget, ico_get_main
 
 
-KROSSK_VERSION = "V0.69"
+KROSSK_VERSION = "V0.77"
 
 def flags_react(args: list):
     argc = len(args)

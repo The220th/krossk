@@ -8,12 +8,15 @@ from .gpg_cipher import gpg_cipher
 #from .pycrypto_aes256_cbc_cipher import pycrypto_cipher
 from .pyca_cryptography_fernet import Pyca_Fernet
 from .rsa4096 import kRSA4096, RSA4096_encrypt
+from .AES_256_CBC import AES256CBC
+from .kaes256cipher import kaes256CBC
 
 __all__ = [
     "ICipher",
     "gpg_cipher.gpg_cipher",
     #"pycrypto_cipher",
     "Pyca_Fernet",
+    "AES256CBC", "kaes256CBC",
     "kRSA4096", "RSA4096_encrypt"
     "Base64", "bytes_to_int", "int_to_bytes", "calc_hash", "calc_hash_512", "calc_hash_file", "utf8_to_bytes", "bytes_to_utf8",
     "getRandomString", "gen_password", "check_passphrase_is_strong"

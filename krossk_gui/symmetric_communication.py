@@ -7,7 +7,7 @@ from PyQt5.QtWidgets import (QWidget, QLabel, QCheckBox, QTextEdit, QLineEdit, Q
 from . import ifMsg, exe_widget_in_QDialog, PasswordWidget, HiddenLineEditWidget
 from . import ico_get_chat, ico_get_chat_in, ico_get_chat_out
 
-from krossk_crypto import Pyca_Fernet, gpg_cipher, check_passphrase_is_strong
+from krossk_crypto import Pyca_Fernet, gpg_cipher, kaes256CBC, check_passphrase_is_strong
 
 class SymmetricCommunicationWidget(QWidget):
 
@@ -68,7 +68,7 @@ class SymmetricCommunicationWidget(QWidget):
 
 class OneSymmetricCommunicationWidget(QWidget):
 
-    __ciphers_list = ["pyca Fernet AES128-cbc", "gpg AES256"] # порядок не менять! 
+    __ciphers_list = ["pyca Fernet AES128-cbc", "gpg AES256", "kaes256CBC"] # порядок не менять! 
 
     def __init__(self, parent, communication_name: str):
         super().__init__(parent)
@@ -154,6 +154,8 @@ class OneSymmetricCommunicationWidget(QWidget):
             cipher = Pyca_Fernet(cipher_key)
         elif(cipher_combo_text == self.__ciphers_list[1]):
             cipher = gpg_cipher(cipher_key)
+        elif(cipher_combo_text == self.__ciphers_list[2]):
+            cipher = kaes256CBC(cipher_key)
         else:
             ifMsg(self, "Failed successfully. ", 4)
             return
@@ -193,6 +195,8 @@ class OneSymmetricCommunicationWidget(QWidget):
             cipher = Pyca_Fernet(cipher_key)
         elif(cipher_combo_text == self.__ciphers_list[1]):
             cipher = gpg_cipher(cipher_key)
+        elif(cipher_combo_text == self.__ciphers_list[2]):
+            cipher = kaes256CBC(cipher_key)
         else:
             ifMsg(self, "Failed successfully. ", 4)
             return

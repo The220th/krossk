@@ -7,7 +7,7 @@ from PyQt5.QtWidgets import (QWidget, QLabel, QCheckBox, QTextEdit, QLineEdit, Q
 from . import PasswordWidget, ifMsg
 from . import ico_get_file
 
-from krossk_crypto import Pyca_Fernet, gpg_cipher, check_passphrase_is_strong
+from krossk_crypto import Pyca_Fernet, gpg_cipher, kaes256CBC, check_passphrase_is_strong
 
 import os
 import threading
@@ -28,7 +28,7 @@ def thread_func(parent: "QWidget", cipher: "ICipher", ENCRYPT_DECRYPT: bool, pat
 
 class FileTransferWidget(QWidget):
 
-    __ciphers_list = ["pyca Fernet AES128-cbc", "gpg AES256"] # порядок не менять! 
+    __ciphers_list = ["pyca Fernet AES128-cbc", "gpg AES256", "kaes256CBC (very slow)"] # порядок не менять! 
 
     def __init__(self, parent):
         super().__init__(parent)
@@ -159,6 +159,8 @@ class FileTransferWidget(QWidget):
                     cipher = Pyca_Fernet(cipher_key)
                 elif(cipher_combo_text == self.__ciphers_list[1]):
                     cipher = gpg_cipher(cipher_key)
+                elif(cipher_combo_text == self.__ciphers_list[2]):
+                    cipher = kaes256CBC(cipher_key)
                 else:
                     ifMsg(self, "Failed successfully. ", 4)
                     self.set_en_de_Mutex(False)
@@ -212,6 +214,8 @@ class FileTransferWidget(QWidget):
                     cipher = Pyca_Fernet(cipher_key)
                 elif(cipher_combo_text == self.__ciphers_list[1]):
                     cipher = gpg_cipher(cipher_key)
+                elif(cipher_combo_text == self.__ciphers_list[2]):
+                    cipher = kaes256CBC(cipher_key)
                 else:
                     ifMsg(self, "Failed successfully. ", 4)
                     self.set_en_de_Mutex(False)
