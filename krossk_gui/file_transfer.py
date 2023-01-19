@@ -18,7 +18,7 @@ def thread_func(parent: "QWidget", cipher: "ICipher", ENCRYPT_DECRYPT: bool, pat
             cipher.encrypt_file(path_src, path_dest)
         else:
             cipher.decrypt_file(path_src, path_dest)
-        ifMsg(None, f"File \"{path_src}\"\n encrypted/decrypted\n to \"{path_dest}\". ", 2)
+        ifMsg(None, f"Finished.\n\nFile \"{path_src}\"\n encrypted/decrypted\n to \"{path_dest}\". ", 2)
     except:
         import traceback
         print(traceback.format_exc())

@@ -117,7 +117,7 @@ def RSA4096_encrypt(pub_key: str, m: int) -> int:
         return pow(m, e, ne)
     return None
 
-class RSA4096:
+class kRSA4096:
 
     def __init__(self):
         prev_recursive_depth = sys.getrecursionlimit()

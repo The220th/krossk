@@ -6,7 +6,7 @@ from PyQt5.QtWidgets import (QWidget, QLabel, QCheckBox, QTextEdit, QLineEdit, Q
 
 from . import ifMsg, PasswordWidget, HiddenLineEditWidget
 
-from krossk_crypto import RSA4096, RSA4096_encrypt, utf8_to_bytes, bytes_to_utf8, Base64
+from krossk_crypto import kRSA4096, RSA4096_encrypt, utf8_to_bytes, bytes_to_utf8, Base64
 from krossk_crypto import bytes_to_int, int_to_bytes, calc_hash, check_passphrase_is_strong
 
 class KeyExchangeWidget(QWidget):
@@ -89,7 +89,7 @@ class KeyExchangeWidget(QWidget):
 
     def __genKeys_button_handler(self):
         ifMsg(self, "It may take some time (a few minuts?)", 2)
-        self.__rsa4096cipher = RSA4096()
+        self.__rsa4096cipher = kRSA4096()
         self.__pub_key = self.__rsa4096cipher.get_pub_key()
         self.__pubKey_text_out.setText(self.__pub_key)
     

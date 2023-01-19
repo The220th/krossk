@@ -15,37 +15,35 @@ def calc_sha256(s: str) -> str:
     res = m.hexdigest()
     return res
 
-def exe(command : str, debug : bool = True) -> tuple:
+def exe(command: list, stdin_msg: str, debug : bool = True) -> tuple:
     if(debug):
-        print(f"> {command}")
+        print(f"> ", end="")
+        print(*command)
 
-    process = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-    out = process.stdout.read().decode("utf-8")
-    err = process.stderr.read().decode("utf-8")
-    errcode = process.returncode
-    return (out, err, errcode)
+    proc = subprocess.run(command, capture_output=True, input=stdin_msg.encode("utf-8"))
+    
+    return (proc.stdout.decode("utf-8"), proc.stderr.decode("utf-8"))
 
 def print_gpg_error(comm_out: tuple):
     print("\n-----GPG ERROR-----")
     print(f"stdout: \n{comm_out[0]}")
     print(f"stderr: \n{comm_out[1]}")
-    print(f"return code: {comm_out[2]}")
+    #print(f"return code: {comm_out[2]}")
     print("-------------------\n")
 
 class gpg_cipher(ICipher):
 
     def __init__(self, key: str):
-        '''key_is_file = path_to_key_file'''
-        #super().__init__()
         self.__cenz = "***"
         self.key = calc_sha256(key)
 
     def encrypt_msg(self, msg: str) -> str:
-        command = f"echo -n \"{msg}\" | gpg --batch --yes --cipher-algo AES256 --passphrase \"{self.key}\" --armor --symmetric -"
-        command_out = f"echo -n \"{self.__cenz}\" | gpg --batch --yes --cipher-algo AES256 --passphrase \"{self.__cenz}\" --armor --symmetric -"
-        print(f"> {command_out}")
+        command = ["gpg", "--batch", "--yes", "--cipher-algo", "AES256", "--passphrase", f"\"{self.key}\"", "--armor", "--symmetric", "-"]
+        command_out = ["gpg", "--batch", "--yes", "--cipher-algo", "AES256", "--passphrase", f"\"{self.__cenz}\"", "--armor", "--symmetric", "-"]
+        print(f"> ", end="")
+        print(*command_out)
 
-        com_out = exe(command, False)
+        com_out = exe(command, msg, False)
         if(com_out[0].find("BEGIN PGP MESSAGE") != -1):
             res = com_out[0]
             res = re.match("-----BEGIN PGP MESSAGE-----(.+)-----END PGP MESSAGE-----", res.replace("\n", ""))[1]
@@ -55,11 +53,13 @@ class gpg_cipher(ICipher):
         return res
 
     def decrypt_msg(self, en_msg: str) -> str:
-        command = f"echo -ne \"-----BEGIN PGP MESSAGE-----\\n{en_msg}\\n-----END PGP MESSAGE-----\\n\" | gpg --decrypt --batch --passphrase \"{self.key}\" -"
-        command_out = f"echo -ne \"-----BEGIN PGP MESSAGE-----\\n{self.__cenz}\\n-----END PGP MESSAGE-----\\n\" | gpg --decrypt --batch --passphrase \"{self.__cenz}\" -"
-        print(f"> {command_out}")
+        stdin_msg = f"-----BEGIN PGP MESSAGE-----\n{en_msg}\n-----END PGP MESSAGE-----\n"
+        command = ["gpg", "--decrypt", "--batch", "--passphrase", f"\"{self.key}\"", "-"]
+        command_out = ["gpg", "--decrypt", "--batch", "--passphrase", f"\"{self.__cenz}\"", "-"]
+        print(f"> ", end="")
+        print(*command_out)
 
-        com_out = exe(command, False)
+        com_out = exe(command, stdin_msg, False)
         if(com_out[1].find("encrypted with 1 passphrase") != -1):
             res = com_out[0]
         else:
@@ -69,34 +69,36 @@ class gpg_cipher(ICipher):
             raise RuntimeError("GPG ERROR. Invalid key?")
         return res
 
-    def encrypt_file(self, de_src: str, en_src: str) -> None:
+    def encrypt_file(self, de_src: str, en_src: str) -> None: # TODO
         if(os.path.isfile(de_src) == False):
             raise RuntimeError(f"{de_src} is not file")
         de_src_abs = os.path.abspath(de_src)
         en_src_abs = os.path.abspath(en_src)
 
-        command = f"gpg --output {en_src} --batch --yes --cipher-algo AES256 --passphrase \"{self.key}\" --armor --symmetric {de_src_abs}"
-        command_out = f"gpg --output {en_src} --batch --yes --cipher-algo AES256 --passphrase \"{self.__cenz}\" --armor --symmetric {de_src_abs}"
-        print(f"> {command_out}")
+        command = ["gpg", "--output", f"{en_src}", "--batch", "--yes", "--cipher-algo", "AES256", "--passphrase", f"\"{self.key}\"", "--armor", "--symmetric", f"{de_src_abs}"]
+        command_out = ["gpg", "--output", f"{en_src}", "--batch", "--yes", "--cipher-algo", "AES256", "--passphrase", f"\"{self.__cenz}\"", "--armor", "--symmetric", f"{de_src_abs}"]
+        print(f"> ", end="")
+        print(*command_out)
 
-        com_out = exe(command, False)
+        com_out = exe(command, "", False)
         if(com_out[0] == ""):
             print("gpg encrypt file: ok")
         else:
             print_gpg_error(com_out)
             raise RuntimeError("GPG ERROR. Invalid key?")
 
-    def decrypt_file(self, en_src: str, de_src: str) -> None:
+    def decrypt_file(self, en_src: str, de_src: str) -> None: # TODO
         if(os.path.isfile(en_src) == False):
             raise RuntimeError(f"{en_src} is not file")
         en_src_abs = os.path.abspath(en_src)
         de_src_abs = os.path.abspath(de_src)
 
-        command = f"gpg --output {de_src} --decrypt --batch --yes --passphrase \"{self.key}\" {en_src}"
-        command_out = f"gpg --output {de_src} --decrypt --batch --yes --passphrase \"{self.__cenz}\" {en_src}"
-        print(f"> {command_out}")
+        command = ["gpg", "--output", f"{de_src}", "--decrypt", "--batch", "--yes", "--passphrase", f"\"{self.key}\"", f"{en_src}"]
+        command_out = ["gpg", "--output", f"{de_src}", "--decrypt", "--batch", "--yes", "--passphrase", f"\"{self.__cenz}\"", f"{en_src}"]
+        print(f"> ", end="")
+        print(*command_out)
 
-        com_out = exe(command, False)
+        com_out = exe(command, "", False)
         if(com_out[0] == ""):
             print("gpg decrypt file: ok")
         else:
@@ -104,9 +106,11 @@ class gpg_cipher(ICipher):
             raise RuntimeError("GPG ERROR. Invalid key?")
     
     def check_gpg_insystem_exists(self):
-        command = "gpg --version"
-        com_out = exe(command)
-        if(com_out[0].find("gpg (GnuPG)") != -1):
-            return True
-        else:
+        try:
+            com_out = exe(["gpg", "--version"], "")
+            if(com_out[0].find("gpg (GnuPG)") != -1):
+                return True
+            else:
+                return False
+        except:
             return False
