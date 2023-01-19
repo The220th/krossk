@@ -125,7 +125,7 @@ class KeyExchangeWidget(QWidget):
             self.__encrypted_key_text_out.setText(key_text_en)
         except:
             import traceback
-            traceback.print_stack()
+            print(traceback.format_exc())
             ifMsg(self, "Error! ", 4)
             return
 
@@ -147,6 +147,6 @@ class KeyExchangeWidget(QWidget):
             self.__key_text_out1.set_text(res)
         except:
             import traceback
-            traceback.print_stack()
+            print(traceback.format_exc())
             ifMsg(self, "Error! ", 4)
             return

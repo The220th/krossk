@@ -14,8 +14,11 @@ def bytes_to_utf8(bs: bytes) -> str:
 def bytes_to_int(b_arr: bytes) -> int:
     return int.from_bytes(b_arr, "big")
 
-def int_to_bytes(a: int) -> bytes:
-    return a.to_bytes((a.bit_length()+7)//8, "big")
+def int_to_bytes(a: int, bytesLen: int = None) -> bytes:
+    if(bytesLen == None):
+        return a.to_bytes((a.bit_length()+7)//8, "big")
+    else:
+        return a.to_bytes(bytesLen, "big")
 
 def calc_hash(x: "bytes or str") -> str:
     if(type(x) == bytes):

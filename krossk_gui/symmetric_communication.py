@@ -7,7 +7,7 @@ from PyQt5.QtWidgets import (QWidget, QLabel, QCheckBox, QTextEdit, QLineEdit, Q
 from . import ifMsg, exe_widget_in_QDialog, PasswordWidget, HiddenLineEditWidget
 from . import ico_get_chat, ico_get_chat_in, ico_get_chat_out
 
-from krossk_crypto import pycrypto_cipher, gpg_cipher, check_passphrase_is_strong
+from krossk_crypto import Pyca_Fernet, gpg_cipher, check_passphrase_is_strong
 
 class SymmetricCommunicationWidget(QWidget):
 
@@ -68,7 +68,7 @@ class SymmetricCommunicationWidget(QWidget):
 
 class OneSymmetricCommunicationWidget(QWidget):
 
-    __ciphers_list = ["pycrypto AES256-cbc", "gpg AES256"] # порядок не менять! 
+    __ciphers_list = ["pyca Fernet AES128-cbc", "gpg AES256"] # порядок не менять! 
 
     def __init__(self, parent, communication_name: str):
         super().__init__(parent)
@@ -94,6 +94,7 @@ class OneSymmetricCommunicationWidget(QWidget):
 
         self.__chat_out = QTextEdit(self)
         self.__chat_out.setReadOnly(False)
+        self.__chat_out.setMinimumSize(QtCore.QSize(350, 350))
         self.__chat_encrypt_button = QPushButton(ico_get_chat_out(), "Encrypt", self)
         self.__chat_encrypt_button.clicked.connect(lambda: self.__chat_encrypt_button_handler())
         self.__chat_out_en = QLineEdit(self)
@@ -105,12 +106,13 @@ class OneSymmetricCommunicationWidget(QWidget):
         self.__grid.addWidget(QLabel("Send this encrypted message to the other party:", self), 4, 0, 1, 2)
         self.__grid.addWidget(self.__chat_out_en, 5, 0, 1, 2)
 
-        self.__chat_in_en = QLineEdit(self)
-        self.__chat_in_en.setReadOnly(False)
-        self.__chat_decrypt_button = QPushButton(ico_get_chat_in(), "Decrypt", self)
-        self.__chat_decrypt_button.clicked.connect(lambda: self.__chat_decrypt_button_handler())
         self.__chat_in = QTextEdit(self)
         self.__chat_in.setReadOnly(True)
+        self.__chat_in.setMinimumSize(QtCore.QSize(350, 350))
+        self.__chat_decrypt_button = QPushButton(ico_get_chat_in(), "Decrypt", self)
+        self.__chat_decrypt_button.clicked.connect(lambda: self.__chat_decrypt_button_handler())
+        self.__chat_in_en = QLineEdit(self)
+        self.__chat_in_en.setReadOnly(False)
 
         self.__grid.addWidget(QLabel("Decrypted message from the other party:", self), 1, 2, 1, 2)
         self.__grid.addWidget(self.__chat_in, 2, 2, 1, 2)
@@ -149,7 +151,7 @@ class OneSymmetricCommunicationWidget(QWidget):
 
         cipher_combo_text = self.__ciphers_combo.currentText()
         if(cipher_combo_text == self.__ciphers_list[0]):
-            cipher = pycrypto_cipher(cipher_key)
+            cipher = Pyca_Fernet(cipher_key)
         elif(cipher_combo_text == self.__ciphers_list[1]):
             cipher = gpg_cipher(cipher_key)
         else:
@@ -162,7 +164,7 @@ class OneSymmetricCommunicationWidget(QWidget):
                 ifMsg(self, "Cannot encrypt! Invalid passphrase or cipher? ", 4)
         except:
             import traceback
-            traceback.print_stack()
+            print(traceback.format_exc())
             ifMsg(self, "Cannot encrypt! ", 4)
             return
 
@@ -188,7 +190,7 @@ class OneSymmetricCommunicationWidget(QWidget):
 
         cipher_combo_text = self.__ciphers_combo.currentText()
         if(cipher_combo_text == self.__ciphers_list[0]):
-            cipher = pycrypto_cipher(cipher_key)
+            cipher = Pyca_Fernet(cipher_key)
         elif(cipher_combo_text == self.__ciphers_list[1]):
             cipher = gpg_cipher(cipher_key)
         else:
@@ -201,7 +203,7 @@ class OneSymmetricCommunicationWidget(QWidget):
                 ifMsg(self, "Cannot decrypt! Invalid passphrase, cipher or encrypted text? ", 4)
         except:
             import traceback
-            traceback.print_stack()
+            print(traceback.format_exc())
             ifMsg(self, "Cannot decrypt! ", 4)
             return
 

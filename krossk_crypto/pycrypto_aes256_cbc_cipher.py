@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+# Устарело и не работает
 
 import os
 import base64
