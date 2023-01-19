@@ -140,8 +140,8 @@ class kRSA4096:
 
         sys.setrecursionlimit(prev_recursive_depth)
 
-    def get_pub_key(self) -> tuple:
-        '''(e, n)'''
+    def get_pub_key(self) -> str:
+        '''e_n'''
         # return self.__pub_key
         b64 = Base64()
         e_str = b64.encode(int_to_bytes(self.__pub_key[0]))
