@@ -16,14 +16,16 @@ def thread_func(parent: "QWidget", cipher: "ICipher", ENCRYPT_DECRYPT: bool, pat
     try:
         if(ENCRYPT_DECRYPT == False):
             cipher.encrypt_file(path_src, path_dest)
-            ifMsg(None, f"Finished.\n\nFile \"{path_src}\"\n encrypted\n to \"{path_dest}\". ", 2)
+            #ifMsg(None, f"Finished.\n\nFile \"{path_src}\"\n encrypted\n to \"{path_dest}\". ", 2)
+            parent.show_msg(f"Finished.\n\nFile \"{path_src}\"\n encrypted\n to \"{path_dest}\". ", 2)
         else:
             cipher.decrypt_file(path_src, path_dest)
-            ifMsg(None, f"Finished.\n\nFile \"{path_src}\"\n decrypted\n to \"{path_dest}\". ", 2)
+            #ifMsg(None, f"Finished.\n\nFile \"{path_src}\"\n decrypted\n to \"{path_dest}\". ", 2)
+            parent.show_msg(f"Finished.\n\nFile \"{path_src}\"\n decrypted\n to \"{path_dest}\". ", 2)
     except:
         import traceback
         print(traceback.format_exc())
-        ifMsg(None, "Cannot encrypt/decrypt file! \nInvalid key or file?", 4)
+        parent.show_msg("Cannot encrypt/decrypt file! \nInvalid key or file?", 4)
     parent.set_en_de_Mutex(False)
 
 class FileTransferWidget(QWidget):
@@ -64,6 +66,8 @@ class FileTransferWidget(QWidget):
         self.__decrypt_button = QPushButton("Decrypt", self)
         self.__decrypt_button.clicked.connect(lambda:self.__decrypt_button_handler())
 
+        self.__info_msg_label = QLabel("", self)
+
         buffWidget = QWidget(self)
         buff_grid = QGridLayout()
         buff_grid.addWidget(self.__encrypt_button, 0, 0, 1, 1)
@@ -84,7 +88,8 @@ class FileTransferWidget(QWidget):
         self.__grid.addWidget(self.__file_src_text, 1, 1, 1, 1)
         self.__grid.addWidget(self.__file_dest_pick, 2, 0, 1, 1)
         self.__grid.addWidget(self.__file_dest_text, 2, 1, 1, 1)
-        self.__grid.addWidget(buffWidget, 3, 0, 1, 2)
+        self.__grid.addWidget(self.__info_msg_label, 3, 0, 1, 2)
+        self.__grid.addWidget(buffWidget, 4, 0, 1, 2)
 
         self.setLayout(self.__grid)
 
@@ -121,7 +126,12 @@ class FileTransferWidget(QWidget):
     def set_en_de_Mutex(self, state: bool):
         self.__xcrypt_button_mutex = state
 
+    def show_msg(self, msg: str, type: int):
+        #ifMsg(self, msg, type)
+        self.__info_msg_label.setText(msg)
+
     def __encrypt_button_handler(self):
+        self.__info_msg_label.setText("")
         if(self.__xcrypt_button_mutex == True):
             ifMsg(self, f"File \"{self.__last_filename_src}\" is still being {self.cipher_mode} \nto \"{self.__last_filename_dest}\"... \nWait please", 2)
             return
@@ -177,6 +187,7 @@ class FileTransferWidget(QWidget):
                 self.set_en_de_Mutex(False)
 
     def __decrypt_button_handler(self):
+        self.__info_msg_label.setText("")
         if(self.__xcrypt_button_mutex == True):
             ifMsg(self, f"File \"{self.__last_filename_src}\" is still being {self.cipher_mode} \nto \"{self.__last_filename_dest}\"... \nWait please", 2)
             return

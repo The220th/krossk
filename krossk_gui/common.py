@@ -78,9 +78,15 @@ class PasswordWidget(QWidget):
         self.__rnd_passwd_button = QPushButton(ico_get_rnd(), "Rnd", self)
         self.__rnd_passwd_button.clicked.connect(lambda:self.__rnd_passwd_button_handler())
 
+        self.__copy_button = QPushButton(ico_get_copy(), "", self)
+        self.__copy_button.clicked.connect(lambda:self.__copy_button_handler())
+        copy_button_h = self.__copy_button.size().height()
+        self.__copy_button.setMaximumSize(QtCore.QSize(25, copy_button_h))
+
         self.__grid.addWidget(self.__password_text, 0, 0, 1, 1)
-        self.__grid.addWidget(self.__passwd_echo_checkbox, 0, 1, 1, 1)
-        self.__grid.addWidget(self.__rnd_passwd_button, 0, 2, 1, 1)
+        self.__grid.addWidget(self.__copy_button, 0, 1, 1, 1)
+        self.__grid.addWidget(self.__passwd_echo_checkbox, 0, 2, 1, 1)
+        self.__grid.addWidget(self.__rnd_passwd_button, 0, 3, 1, 1)
 
         self.setLayout(self.__grid)
     
@@ -95,27 +101,41 @@ class PasswordWidget(QWidget):
             self.__password_text.setEchoMode(QLineEdit.Password)
         else:
             self.__password_text.setEchoMode(QLineEdit.Normal)
+        # QApplication::clipboard()->setText(strings.join("\n")); 
+        # python QKeySequence::Copy
+        # https://forum.qt.io/topic/30162/how-disable-copy-and-paste-on-qlineedit/2
+        # https://www.qtcentre.org/threads/47579-QListWidget-how-to-copy-selected-items-to-clipboard
     
     def __rnd_passwd_button_handler(self):
         self.__password_text.setText(gen_password())
 
+    def __copy_button_handler(self):
+        text_to_copy = self.get_password()
+        QApplication.clipboard().setText(text_to_copy)
+
 class HiddenLineEditWidget(QWidget):
 
-    def __init__(self, parent):
+    def __init__(self, parent, RO = True):
         super().__init__(parent)
 
         self.__grid = QGridLayout()
 
         self.__hidden_text = QLineEdit(self)
-        self.__hidden_text.setReadOnly(False)
+        self.__hidden_text.setReadOnly(RO)
         self.__hidden_text.setEchoMode(QLineEdit.Password)
+
+        self.__copy_button = QPushButton(ico_get_copy(), "", self)
+        self.__copy_button.clicked.connect(lambda:self.__copy_button_handler())
+        copy_button_h = self.__copy_button.size().height()
+        self.__copy_button.setMaximumSize(QtCore.QSize(25, copy_button_h))
 
         self.__passwd_echo_checkbox = QCheckBox("Show", self)
         self.__passwd_echo_checkbox.setChecked(False)
         self.__passwd_echo_checkbox.toggled.connect(lambda:self.__passwd_echo_checkbox_handler())
 
         self.__grid.addWidget(self.__hidden_text, 0, 0, 1, 1)
-        self.__grid.addWidget(self.__passwd_echo_checkbox, 0, 1, 1, 1)
+        self.__grid.addWidget(self.__copy_button, 0, 1, 1, 1)
+        self.__grid.addWidget(self.__passwd_echo_checkbox, 0, 2, 1, 1)
 
         self.setLayout(self.__grid)
     
@@ -131,6 +151,9 @@ class HiddenLineEditWidget(QWidget):
         else:
             self.__hidden_text.setEchoMode(QLineEdit.Normal)
 
+    def __copy_button_handler(self):
+        text_to_copy = self.get_password()
+        QApplication.clipboard().setText(text_to_copy)
 
 
 
@@ -195,6 +218,16 @@ def ico_get_chat_out() -> "QIcon":
 
 def ico_get_file() -> "QIcon":
     imageBytes = b"\x89\x50\x4e\x47\x0d\x0a\x1a\x0a\x00\x00\x00\x0d\x49\x48\x44\x52\x00\x00\x00\x15\x00\x00\x00\x15\x08\x06\x00\x00\x00\xa9\x17\xa5\x96\x00\x00\x00\x09\x70\x48\x59\x73\x00\x00\x0e\xc4\x00\x00\x0e\xc4\x01\x95\x2b\x0e\x1b\x00\x00\x00\x6b\x49\x44\x41\x54\x38\x8d\xed\x94\xc1\x0e\xc0\x20\x08\x43\x75\xd9\xff\xff\x32\x5e\x16\x13\x18\x16\x0a\x57\xdf\xc5\x44\xa0\x29\x41\x9c\x43\x23\x83\x67\xa2\xa0\x90\xa2\x62\x4e\x98\xc4\x8a\xfe\x6a\xdf\xa4\x38\x6c\xf1\x8b\x8b\x97\xd7\x71\xaa\xee\x1e\x52\x28\x85\xd7\x3e\x43\xd8\x5d\xe5\x39\xb9\x1a\xd9\x41\x45\xa8\x01\x79\xa2\xd1\xa4\x43\xae\x53\x9c\x50\xe1\x3a\xc5\x09\x15\xec\x87\xd2\x59\xd5\x5d\x6b\x5d\x75\xf7\xbf\xdd\xe5\x91\x05\x1c\x75\x18\x2e\x63\x5e\xd1\x08\x00\x00\x00\x00\x49\x45\x4e\x44\xae\x42\x60\x82"
+    stream = BytesIO(imageBytes)
+    image = PIL_Image.open(stream).convert("RGBA")
+    stream.close()
+    image_image_qt = PIL_ImageQt.ImageQt(image)
+    pixmap = QPixmap.fromImage(image_image_qt)
+    icon = QIcon(pixmap)
+    return icon
+
+def ico_get_copy() -> "QIcon":
+    imageBytes = b"\x89\x50\x4e\x47\x0d\x0a\x1a\x0a\x00\x00\x00\x0d\x49\x48\x44\x52\x00\x00\x00\x15\x00\x00\x00\x15\x08\x06\x00\x00\x00\xa9\x17\xa5\x96\x00\x00\x00\x09\x70\x48\x59\x73\x00\x00\x0e\xc4\x00\x00\x0e\xc4\x01\x95\x2b\x0e\x1b\x00\x00\x00\x65\x49\x44\x41\x54\x38\x8d\xed\x94\x51\x0a\x00\x21\x08\x44\xc7\xd8\x73\x79\xff\x5b\xd9\xef\x12\x62\xa3\x6d\xfd\x6c\x03\x7d\x04\xf6\x66\x04\x0d\x38\x20\x63\x8e\xaa\x5a\x16\x4a\x19\x67\xc0\x63\xe1\x27\xa9\x3d\x68\x98\x98\x01\x97\xa0\x33\x70\x19\xfa\x06\x8b\x53\x28\xc1\x9d\x31\x94\x16\x24\x29\xeb\x59\x78\xeb\x75\x60\x00\xb0\x25\xe9\x85\xfe\x19\xea\xcd\x69\xea\xaf\xac\x28\x6b\x60\x00\xb7\x51\xdb\x93\x53\xea\x22\x01\x3b\x47\x71\xce\xdc\x46\x00\x00\x00\x00\x49\x45\x4e\x44\xae\x42\x60\x82"
     stream = BytesIO(imageBytes)
     image = PIL_Image.open(stream).convert("RGBA")
     stream.close()

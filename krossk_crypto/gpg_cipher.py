@@ -15,6 +15,23 @@ def calc_sha256(s: str) -> str:
     res = m.hexdigest()
     return res
 
+def decode_out(_stdout, _stderr) -> (str, str):
+    # https://docs.python.org/3/library/codecs.html#standard-encodings
+    try:
+        res = (_stdout.decode("utf-8"), _stderr.decode("utf-8"))
+    except:
+        try:
+            res = (_stdout.decode("cp1251"), _stderr.decode("cp1251"))
+        except:
+            try:
+                res = (_stdout.decode("cp866"), _stderr.decode("cp866"))
+            except:
+                try:
+                    res = (_stdout.decode("ascii"), _stderr.decode("ascii"))
+                except:
+                    res = (_stdout.decode(), _stderr.decode())
+    return res
+
 def exe(command: list, stdin_msg: str, debug : bool = True) -> tuple:
     if(debug):
         print(f"> ", end="")
@@ -22,7 +39,8 @@ def exe(command: list, stdin_msg: str, debug : bool = True) -> tuple:
 
     proc = subprocess.run(command, capture_output=True, input=stdin_msg.encode("utf-8"))
     
-    return (proc.stdout.decode("utf-8"), proc.stderr.decode("utf-8"))
+    #return (proc.stdout.decode("utf-8"), proc.stderr.decode("utf-8"))
+    return decode_out(proc.stdout, proc.stderr)
 
 def print_gpg_error(comm_out: tuple):
     print("\n-----GPG ERROR-----")
@@ -109,6 +127,7 @@ class gpg_cipher(ICipher):
     def check_gpg_insystem_exists(self):
         try:
             com_out = exe(["gpg", "--version"], "")
+            print(com_out)
             if(com_out[0].find("gpg (GnuPG)") != -1):
                 return True
             else:

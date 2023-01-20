@@ -6,8 +6,9 @@ from PyQt5.QtWidgets import QApplication
 
 from krossk_gui import MainWidget, ico_get_main
 
+# TODO: add clipboard anywhere
 
-KROSSK_VERSION = "V0.77"
+KROSSK_VERSION = "V0.87"
 
 def flags_react(args: list):
     argc = len(args)
