@@ -4,7 +4,7 @@ from PyQt5 import (QtCore, QtGui)
 from PyQt5.QtWidgets import (QWidget, QLabel, QCheckBox, QTextEdit, QLineEdit, QPushButton,
     QFrame, QApplication, QMessageBox, QGridLayout, QComboBox, QFileDialog, QStackedWidget)
 
-from . import ifMsg, exe_widget_in_QDialog, PasswordWidget, HiddenLineEditWidget
+from . import ifMsg, exe_widget_in_QDialog, PasswordWidget, HiddenLineEditWidget, CopyPasteEditWidget
 from . import ico_get_chat, ico_get_chat_in, ico_get_chat_out
 
 from krossk_crypto import Pyca_Fernet, gpg_cipher, kaes256CBC, check_passphrase_is_strong
@@ -97,8 +97,7 @@ class OneSymmetricCommunicationWidget(QWidget):
         self.__chat_out.setMinimumSize(QtCore.QSize(350, 350))
         self.__chat_encrypt_button = QPushButton(ico_get_chat_out(), "Encrypt", self)
         self.__chat_encrypt_button.clicked.connect(lambda: self.__chat_encrypt_button_handler())
-        self.__chat_out_en = QLineEdit(self)
-        self.__chat_out_en.setReadOnly(True)
+        self.__chat_out_en = CopyPasteEditWidget(self, True, False)
 
         self.__grid.addWidget(QLabel("Type message to the other party:", self), 1, 0, 1, 2)
         self.__grid.addWidget(self.__chat_out, 2, 0, 1, 2)
@@ -111,8 +110,7 @@ class OneSymmetricCommunicationWidget(QWidget):
         self.__chat_in.setMinimumSize(QtCore.QSize(350, 350))
         self.__chat_decrypt_button = QPushButton(ico_get_chat_in(), "Decrypt", self)
         self.__chat_decrypt_button.clicked.connect(lambda: self.__chat_decrypt_button_handler())
-        self.__chat_in_en = QLineEdit(self)
-        self.__chat_in_en.setReadOnly(False)
+        self.__chat_in_en = CopyPasteEditWidget(self, False, True)
 
         self.__grid.addWidget(QLabel("Decrypted message from the other party:", self), 1, 2, 1, 2)
         self.__grid.addWidget(self.__chat_in, 2, 2, 1, 2)

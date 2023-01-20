@@ -4,7 +4,7 @@ from PyQt5 import (QtCore, QtGui)
 from PyQt5.QtWidgets import (QWidget, QLabel, QCheckBox, QTextEdit, QLineEdit, QPushButton,
     QFrame, QApplication, QMessageBox, QGridLayout, QComboBox, QFileDialog, QStackedWidget)
 
-from . import ifMsg, PasswordWidget, HiddenLineEditWidget
+from . import ifMsg, PasswordWidget, HiddenLineEditWidget, CopyPasteEditWidget
 
 from krossk_crypto import kRSA4096, RSA4096_encrypt, utf8_to_bytes, bytes_to_utf8, Base64
 from krossk_crypto import bytes_to_int, int_to_bytes, calc_hash_512, check_passphrase_is_strong
@@ -64,13 +64,11 @@ class one_KeyExchangeWidget(QWidget):
         else:
             self.__genKeys_button = QPushButton("Generate keys", self)
         self.__genKeys_button.clicked.connect(lambda:self.__genKeys_button_handler())
-        self.__pubKey_text_out = QLineEdit(self)
-        self.__pubKey_text_out.setReadOnly(True)
+        self.__pubKey_text_out = CopyPasteEditWidget(self, True, False)
 
         if(self.__algo_num == 2):
             self.__key_text_in = PasswordWidget(self)
-        self.__pubKey_text_in = QLineEdit(self)
-        self.__pubKey_text_in.setReadOnly(False)
+        self.__pubKey_text_in = CopyPasteEditWidget(self, False, True)
         if(self.__algo_num == 1):
             self.__encrypt_button = QPushButton("Generate keys", self)
         elif(self.__algo_num == 2):
@@ -78,14 +76,11 @@ class one_KeyExchangeWidget(QWidget):
         else:
             ifMsg(self, "Failed successfully", 4)
         self.__encrypt_button.clicked.connect(lambda:self.__encrypt_button_handler())
-        #self.__encrypted_shakey_text_out = QLineEdit(self)
-        #self.__encrypted_shakey_text_out.setReadOnly(True)
-        self.__encrypted_key_text_out = QLineEdit(self)
-        self.__encrypted_key_text_out.setReadOnly(True)
+
+        self.__encrypted_key_text_out = CopyPasteEditWidget(self, True, False)
         self.__key_text_out2 = HiddenLineEditWidget(self)
 
-        self.__encrypted_key_text_in = QLineEdit(self)
-        self.__encrypted_key_text_in.setReadOnly(False)
+        self.__encrypted_key_text_in = CopyPasteEditWidget(self, False, True)
         self.__deKeys_button = QPushButton("Form key", self)
         self.__deKeys_button.clicked.connect(lambda:self.__deKeys_button_handler())   
         self.__key_text_out1 = HiddenLineEditWidget(self)

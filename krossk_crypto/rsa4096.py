@@ -73,7 +73,7 @@ def getSophieGermainNum(n: int) -> tuple:
         return getSophieGermainNum(n)
     return (res, res2)
 
-def extendedGCD(a, b) -> tuple:
+def extendedGCD_recursive(a, b) -> tuple:
     '''
     Расширенный алгоритм Евклида:
     a*x + b*y = gcd(a, b)
@@ -87,6 +87,21 @@ def extendedGCD(a, b) -> tuple:
     y = x1 - (a // b)*y1
 
     return (gcd, x, y)
+
+def extendedGCD(a, b) -> tuple:
+    '''
+    Расширенный алгоритм Евклида:
+    a*x + b*y = gcd(a, b)
+    return[0]=gcd, return[1]=x, return[2]=y
+    '''
+    prevx, x = 1, 0
+    prevy, y = 0, 1
+    while(b != 0):
+        q = a//b
+        x, prevx = prevx - q*x, x
+        y, prevy = prevy - q*y, y
+        a, b = b, a % b
+    return a, prevx, prevy
 
 def inverse_multiplicative(a, m):
     '''

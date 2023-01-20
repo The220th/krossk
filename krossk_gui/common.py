@@ -115,7 +115,7 @@ class PasswordWidget(QWidget):
 
 class HiddenLineEditWidget(QWidget):
 
-    def __init__(self, parent, RO = True):
+    def __init__(self, parent, RO: bool = True):
         super().__init__(parent)
 
         self.__grid = QGridLayout()
@@ -152,11 +152,48 @@ class HiddenLineEditWidget(QWidget):
             self.__hidden_text.setEchoMode(QLineEdit.Normal)
 
     def __copy_button_handler(self):
-        text_to_copy = self.get_password()
+        text_to_copy = self.get_text()
         QApplication.clipboard().setText(text_to_copy)
 
+class CopyPasteEditWidget(QWidget):
 
+    def __init__(self, parent, RO: bool, copy_paste: bool):
+        super().__init__(parent)
 
+        self.__copy_paste = copy_paste
+
+        self.__grid = QGridLayout()
+        self.__grid.setHorizontalSpacing(1)
+
+        self.__text = QLineEdit(self)
+        self.__text.setReadOnly(RO)
+
+        if(self.__copy_paste == False):
+            self.__copypaste_button = QPushButton(ico_get_copy(), "", self)
+        else:
+            self.__copypaste_button = QPushButton(ico_get_paste(), "", self)
+        self.__copypaste_button.clicked.connect(lambda:self.__copypaste_button_handler())
+        copypaste_button_h = self.__copypaste_button.size().height()
+        self.__copypaste_button.setMaximumSize(QtCore.QSize(30, copypaste_button_h))
+
+        self.__grid.addWidget(self.__text, 0, 0, 1, 1)
+        self.__grid.addWidget(self.__copypaste_button, 0, 1, 1, 1)
+
+        self.setLayout(self.__grid)
+    
+    def text(self) -> str:
+        return self.__text.text()
+    
+    def setText(self, txt: str):
+        self.__text.setText(txt)
+
+    def __copypaste_button_handler(self):
+        if(self.__copy_paste == False):
+            text_to_copy = self.text()
+            QApplication.clipboard().setText(text_to_copy)
+        else:
+            text_to_paste = QApplication.clipboard().text()
+            self.setText(text_to_paste)
 
 
 
@@ -228,6 +265,16 @@ def ico_get_file() -> "QIcon":
 
 def ico_get_copy() -> "QIcon":
     imageBytes = b"\x89\x50\x4e\x47\x0d\x0a\x1a\x0a\x00\x00\x00\x0d\x49\x48\x44\x52\x00\x00\x00\x15\x00\x00\x00\x15\x08\x06\x00\x00\x00\xa9\x17\xa5\x96\x00\x00\x00\x09\x70\x48\x59\x73\x00\x00\x0e\xc4\x00\x00\x0e\xc4\x01\x95\x2b\x0e\x1b\x00\x00\x00\x65\x49\x44\x41\x54\x38\x8d\xed\x94\x51\x0a\x00\x21\x08\x44\xc7\xd8\x73\x79\xff\x5b\xd9\xef\x12\x62\xa3\x6d\xfd\x6c\x03\x7d\x04\xf6\x66\x04\x0d\x38\x20\x63\x8e\xaa\x5a\x16\x4a\x19\x67\xc0\x63\xe1\x27\xa9\x3d\x68\x98\x98\x01\x97\xa0\x33\x70\x19\xfa\x06\x8b\x53\x28\xc1\x9d\x31\x94\x16\x24\x29\xeb\x59\x78\xeb\x75\x60\x00\xb0\x25\xe9\x85\xfe\x19\xea\xcd\x69\xea\xaf\xac\x28\x6b\x60\x00\xb7\x51\xdb\x93\x53\xea\x22\x01\x3b\x47\x71\xce\xdc\x46\x00\x00\x00\x00\x49\x45\x4e\x44\xae\x42\x60\x82"
+    stream = BytesIO(imageBytes)
+    image = PIL_Image.open(stream).convert("RGBA")
+    stream.close()
+    image_image_qt = PIL_ImageQt.ImageQt(image)
+    pixmap = QPixmap.fromImage(image_image_qt)
+    icon = QIcon(pixmap)
+    return icon
+
+def ico_get_paste() -> "QIcon":
+    imageBytes = b"\x89\x50\x4e\x47\x0d\x0a\x1a\x0a\x00\x00\x00\x0d\x49\x48\x44\x52\x00\x00\x00\x15\x00\x00\x00\x15\x08\x06\x00\x00\x00\xa9\x17\xa5\x96\x00\x00\x00\x09\x70\x48\x59\x73\x00\x00\x0e\xc4\x00\x00\x0e\xc4\x01\x95\x2b\x0e\x1b\x00\x00\x00\x55\x49\x44\x41\x54\x38\x8d\x63\x60\xa0\x01\x60\x24\x20\xff\x9f\x1c\xfd\xd8\x04\x09\x19\x44\xd0\x02\x26\x3c\x0a\x08\xf9\x02\xa7\x3a\x16\x62\x6d\x27\x05\xe0\x72\x29\x45\x80\x26\x86\xe2\xf3\x3e\x31\x11\x86\x35\x78\xf0\x19\x4a\x56\x78\x32\x30\x8c\x84\x30\xc5\x1b\x34\xa3\x61\x8a\x13\x60\x0b\x53\xa2\x82\x64\x34\x4c\xb1\x02\x72\x0b\x6a\xda\x01\x00\xcf\xbb\x06\x3c\x85\xa6\x23\x7c\x00\x00\x00\x00\x49\x45\x4e\x44\xae\x42\x60\x82"
     stream = BytesIO(imageBytes)
     image = PIL_Image.open(stream).convert("RGBA")
     stream.close()
