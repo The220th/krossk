@@ -2,13 +2,13 @@
 
 from PyQt5 import (QtCore, QtGui)
 from PyQt5.QtWidgets import (QWidget, QLabel, QCheckBox, QTextEdit, QLineEdit, QPushButton,
-    QFrame, QApplication, QMessageBox, QGridLayout, QComboBox, QFileDialog, QStackedWidget)
+    QFrame, QApplication, QMessageBox, QGridLayout, QComboBox, QFileDialog, QStackedWidget, QTabWidget)
 
 from . import KeyExchangeWidget, SymmetricCommunicationWidget, FileTransferWidget
 
 class MainWidget(QWidget):
 
-    __variantsToChoose = ["Key exchange", "Symmetric communication", "Encrypt/decrypt file"]
+    #__variantsToChoose = ["Key exchange", "Symmetric communication", "Encrypt/decrypt file"]
 
     def __init__(self):
         super().__init__()
@@ -19,26 +19,14 @@ class MainWidget(QWidget):
         self.__symmetric_communication_widget = SymmetricCommunicationWidget(self)
         self.__file_transfer_widget = FileTransferWidget(self)
 
-        self.__stackedWidget = QStackedWidget(self)
-        self.__stackedWidget.addWidget(self.__key_exchange_widget)
-        self.__stackedWidget.addWidget(self.__symmetric_communication_widget)
-        self.__stackedWidget.addWidget(self.__file_transfer_widget)
+        self.__tabs = QTabWidget(self)
+        self.__tabs.resize(300,200)
+        self.__tabs.addTab(self.__key_exchange_widget, "Key exchange")
+        self.__tabs.addTab(self.__symmetric_communication_widget, "Symmetric communication")
+        self.__tabs.addTab(self.__file_transfer_widget, "Encrypt/decrypt file")
 
-        self.__widgetsSelectCombo = QComboBox(self)
-        self.__widgetsSelectCombo.addItems(self.__variantsToChoose)
-        self.__widgetsSelectCombo.activated[str].connect(self.__widgetsSelectComboActivated)
-
-        self.__grid.addWidget(self.__widgetsSelectCombo, 0, 0, 1, 1)
-        self.__grid.addWidget(self.__stackedWidget, 1, 0, 1, 1)
+        self.__grid.addWidget(self.__tabs, 0, 0, 1, 1)
 
         self.setLayout(self.__grid)
 
         self.show()
-
-    def __widgetsSelectComboActivated(self, text: str):
-        i = 0
-        for var_i in self.__variantsToChoose:
-            if(text == var_i):
-                break
-            i-=-1
-        self.__stackedWidget.setCurrentIndex(i)

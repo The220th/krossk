@@ -8,6 +8,14 @@ from krossk_gui import MainWidget, ico_get_main
 
 KROSSK_VERSION = "V0.95"
 
+# TODO: svg
+
+# TODO: groupbox add?
+
+# TODO: symmetric communication up-down, down-up?
+
+# TODO: add extentions?
+
 def flags_react(args: list):
     argc = len(args)
     if(argc >= 2 and args[1] == "--version"):
@@ -23,7 +31,7 @@ if __name__ == '__main__':
     app = QApplication(sys.argv)
 
     mainWidget = MainWidget()
-    mainWidget.setWindowTitle("filecryptodisk")
+    mainWidget.setWindowTitle("krossk")
 
     mainWidget.setWindowIcon(ico_get_main())
 

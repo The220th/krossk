@@ -2,7 +2,7 @@
 
 from PyQt5 import (QtCore, QtGui)
 from PyQt5.QtWidgets import (QWidget, QLabel, QCheckBox, QTextEdit, QLineEdit, QPushButton,
-    QFrame, QApplication, QMessageBox, QGridLayout, QComboBox, QFileDialog, QStackedWidget)
+    QFrame, QApplication, QMessageBox, QGridLayout, QVBoxLayout, QComboBox, QFileDialog, QStackedWidget, QGroupBox)
 
 from . import ifMsg, exe_widget_in_QDialog, PasswordWidget, HiddenLineEditWidget, CopyPasteEditWidget
 from . import ico_get_chat, ico_get_chat_in, ico_get_chat_out
@@ -49,7 +49,7 @@ class SymmetricCommunicationWidget(QWidget):
 
     def addNewCommunication(self, communication_name: str):
         if(self.check_if_communication_exists(communication_name)):
-            ifMsg(self, f"\"{new_com_name}\" already exists. Choose another communication name", 4)
+            ifMsg(self, f"\"{communication_name}\" already exists. Choose another communication name", 4)
             return
         self.__list_of_communications.append(communication_name)
         communication_widget = OneSymmetricCommunicationWidget(self, communication_name)
@@ -68,7 +68,7 @@ class SymmetricCommunicationWidget(QWidget):
 
 class OneSymmetricCommunicationWidget(QWidget):
 
-    __ciphers_list = ["pyca Fernet AES128-cbc", "gpg AES256", "kaes256CBC"] # порядок не менять! 
+    __ciphers_list = ["PyCA Fernet AES128-cbc", "gpg AES256", "kaes256CBC"] # порядок не менять! 
 
     def __init__(self, parent, communication_name: str):
         super().__init__(parent)
@@ -76,7 +76,7 @@ class OneSymmetricCommunicationWidget(QWidget):
 
         self.__grid = QGridLayout()
         
-        self.__pswd = PasswordWidget(self)
+        self.__pswd = PasswordWidget(self, "Passphrase:")
 
         self.__ciphers_combo = QComboBox(self)
         self.__ciphers_combo.addItems(self.__ciphers_list)
@@ -84,7 +84,7 @@ class OneSymmetricCommunicationWidget(QWidget):
         self.__ciphers_combo_prev_index = 0
 
         self.__chat_messages = []
-        self.__veiw_chat_button = QPushButton(ico_get_chat(), "View chat", self)
+        self.__veiw_chat_button = QPushButton(ico_get_chat(), "View logs", self)
         self.__veiw_chat_button.clicked.connect(lambda: self.__veiw_chat_button_handler())
         
         self.__grid.addWidget(self.__pswd, 0, 0, 1, 1)
@@ -99,12 +99,6 @@ class OneSymmetricCommunicationWidget(QWidget):
         self.__chat_encrypt_button.clicked.connect(lambda: self.__chat_encrypt_button_handler())
         self.__chat_out_en = CopyPasteEditWidget(self, True, False)
 
-        self.__grid.addWidget(QLabel("Type message to the other party:", self), 1, 0, 1, 2)
-        self.__grid.addWidget(self.__chat_out, 2, 0, 1, 2)
-        self.__grid.addWidget(self.__chat_encrypt_button, 3, 0, 1, 2)
-        self.__grid.addWidget(QLabel("Send this encrypted message to the other party:", self), 4, 0, 1, 2)
-        self.__grid.addWidget(self.__chat_out_en, 5, 0, 1, 2)
-
         self.__chat_in = QTextEdit(self)
         self.__chat_in.setReadOnly(True)
         self.__chat_in.setMinimumSize(QtCore.QSize(350, 350))
@@ -112,11 +106,41 @@ class OneSymmetricCommunicationWidget(QWidget):
         self.__chat_decrypt_button.clicked.connect(lambda: self.__chat_decrypt_button_handler())
         self.__chat_in_en = CopyPasteEditWidget(self, False, True)
 
-        self.__grid.addWidget(QLabel("Decrypted message from the other party:", self), 1, 2, 1, 2)
-        self.__grid.addWidget(self.__chat_in, 2, 2, 1, 2)
-        self.__grid.addWidget(self.__chat_decrypt_button, 3, 2, 1, 2)
-        self.__grid.addWidget(QLabel("Enter message from the other party:", self), 4, 2, 1, 2)
-        self.__grid.addWidget(self.__chat_in_en, 5, 2, 1, 2)
+        # ========== up-down, down-up ==========
+        self.__gb1 = QGroupBox("", self)
+        self.__gb2 = QGroupBox("", self)
+        gb1_l = QVBoxLayout(self.__gb1)
+        gb2_l = QVBoxLayout(self.__gb2)
+        self.__gb1.setLayout(gb1_l)
+        self.__gb2.setLayout(gb2_l)
+
+        gb1_l.addWidget(QLabel("Type message to the other party:", self))
+        gb1_l.addWidget(self.__chat_out)
+        gb1_l.addWidget(self.__chat_encrypt_button)
+        gb1_l.addWidget(QLabel("Send this encrypted message to the other party:"))
+        gb1_l.addWidget(self.__chat_out_en)
+        
+        self.__grid.addWidget(self.__gb1, 1, 0, 1, 2)
+
+        #self.__grid.addWidget(QLabel("Type message to the other party:", self), 1, 0, 1, 2)
+        #self.__grid.addWidget(self.__chat_out, 2, 0, 1, 2)
+        #self.__grid.addWidget(self.__chat_encrypt_button, 3, 0, 1, 2)
+        #self.__grid.addWidget(QLabel("Send this encrypted message to the other party:", self), 4, 0, 1, 2)
+        #self.__grid.addWidget(self.__chat_out_en, 5, 0, 1, 2)
+
+        gb2_l.addWidget(QLabel("Enter message from the other party:", self))
+        gb2_l.addWidget(self.__chat_in_en)
+        gb2_l.addWidget(self.__chat_decrypt_button)
+        gb2_l.addWidget(QLabel("Decrypted message from the other party:"))
+        gb2_l.addWidget(self.__chat_in)
+
+        self.__grid.addWidget(self.__gb2, 1, 2, 1, 2)
+
+        #self.__grid.addWidget(QLabel("Decrypted message from the other party:", self), 1, 2, 1, 2)
+        #self.__grid.addWidget(self.__chat_in, 2, 2, 1, 2)
+        #self.__grid.addWidget(self.__chat_decrypt_button, 3, 2, 1, 2)
+        #self.__grid.addWidget(QLabel("Enter message from the other party:", self), 4, 2, 1, 2)
+        #self.__grid.addWidget(self.__chat_in_en, 5, 2, 1, 2)
 
         self.setLayout(self.__grid)
 
@@ -215,7 +239,7 @@ class OneSymmetricCommunicationWidget(QWidget):
     def __veiw_chat_button_handler(self):
         show_chat_widget = QWidget(self)
         grid = QGridLayout()
-        grid.addWidget(QLabel(f"\"{self.__communication_name}\" chat: ", self), 0, 0, 1, 1)
+        grid.addWidget(QLabel(f"\"{self.__communication_name}\" logs: ", self), 0, 0, 1, 1)
         chat_text = QTextEdit(self)
         chat_text.setReadOnly(True)
         for msg in self.__chat_messages:
@@ -244,26 +268,43 @@ class AddNewCommunicationWidget(QWidget):
 
         self.__add_button = QPushButton("Add", self)
         self.__add_button.clicked.connect(lambda: self.__add_button_handler())
+        #self.__add_button.setDefault(True)
+        #self.__add_button.setFocus()
 
         self.__status_label = QLabel("", self)
 
         self.__grid.addWidget(QLabel("Enter new communication name: ", self), 0, 0, 1, 1)
         self.__grid.addWidget(self.__text_input, 1, 0, 1, 1)
         self.__grid.addWidget(self.__add_button, 2, 0, 1, 1)
-        self.__grid.addWidget(self.__status_label, 3, 0, 1, 1)
+        self.__grid.addWidget(QLabel("If you need to add multiple new communication, \nseparate them by comma (\",\")."), 3, 0, 1, 1)
+        self.__grid.addWidget(self.__status_label, 4, 0, 1, 1)
 
         self.setLayout(self.__grid)
     
     def __add_button_handler(self):
+        self.__status_label.setText("")
         new_com_name = self.__text_input.text()
         if(new_com_name == ""):
             ifMsg(self, "Fill communication name", 4)
             return
-        if(self.__parent.check_if_communication_exists(new_com_name)):
-            ifMsg(self, f"\"{new_com_name}\" already exists. Choose another communication name", 4)
-            return
-        self.__parent.addNewCommunication(new_com_name)
-        self.__status_label.setText("Added!")
+        
+        if(new_com_name.find(",") != -1):
+            new_com_names = list(new_com_name.split(","))
+            for new_com_name_i in new_com_names:
+                new_com_name_i = new_com_name_i.strip()
+                if(self.__parent.check_if_communication_exists(new_com_name_i)):
+                    ifMsg(self, f"\"{new_com_name_i}\" already exists. Choose another communication name", 4)
+                    return
+            for new_com_name_i in new_com_names:
+                self.__parent.addNewCommunication(new_com_name_i)
+            self.__status_label.setText("Added!")
+        else:
+            new_com_name = new_com_name.strip()
+            if(self.__parent.check_if_communication_exists(new_com_name)):
+                ifMsg(self, f"\"{new_com_name}\" already exists. Choose another communication name", 4)
+                return
+            self.__parent.addNewCommunication(new_com_name)
+            self.__status_label.setText("Added!")
 
     def __text_input_handler(self):
         self.__status_label.setText("")

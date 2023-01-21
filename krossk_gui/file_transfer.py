@@ -30,7 +30,7 @@ def thread_func(parent: "QWidget", cipher: "ICipher", ENCRYPT_DECRYPT: bool, pat
 
 class FileTransferWidget(QWidget):
 
-    __ciphers_list = ["pyca Fernet AES128-cbc", "gpg AES256", "kaes256CBC (very slow)"] # порядок не менять! 
+    __ciphers_list = ["PyCA Fernet AES128-cbc", "gpg AES256", "kaes256CBC (very slow)"] # порядок не менять! 
 
     def __init__(self, parent):
         super().__init__(parent)
@@ -41,7 +41,7 @@ class FileTransferWidget(QWidget):
 
         self.__grid = QGridLayout()
 
-        self.__pswd = PasswordWidget(self)
+        self.__pswd = PasswordWidget(self, "Passphrase")
 
         self.__ciphers_combo = QComboBox(self)
         self.__ciphers_combo.addItems(self.__ciphers_list)
@@ -91,6 +91,7 @@ class FileTransferWidget(QWidget):
         self.__grid.addWidget(self.__info_msg_label, 3, 0, 1, 2)
         self.__grid.addWidget(buffWidget, 4, 0, 1, 2)
 
+        self.__grid.setRowStretch(0, 0)
         self.setLayout(self.__grid)
 
     def __ciphers_combo_handler(self, text: str):
@@ -113,6 +114,9 @@ class FileTransferWidget(QWidget):
         filepath = os.path.abspath(filepath)
         self.__file_src_text.setText(filepath)
 
+        if(self.__file_dest_text.text() == ""):
+            self.__file_dest_text.setText(filepath + f".encrypted")
+
     def __file_dest_pick_handler(self):
         curdir = str(os.path.abspath(os.getcwd()))
         file_prob_text = self.__file_dest_text.text()
@@ -126,16 +130,20 @@ class FileTransferWidget(QWidget):
     def set_en_de_Mutex(self, state: bool):
         self.__xcrypt_button_mutex = state
 
-    def show_msg(self, msg: str, type: int):
+
+#https://stackoverflow.com/questions/26958644/qt-loading-indicator-widget
+#          https://tenor.com/view/loading-buffering-spinning-waiting-gif-17313179
+#          https://tenor.com/view/fox-reverse-minecraft-spinning-fox-spin-gif-21576621
+    def show_msg(self, msg: str, type: int = 2):
         #ifMsg(self, msg, type)
         self.__info_msg_label.setText(msg)
 
     def __encrypt_button_handler(self):
-        self.__info_msg_label.setText("")
         if(self.__xcrypt_button_mutex == True):
             ifMsg(self, f"File \"{self.__last_filename_src}\" is still being {self.cipher_mode} \nto \"{self.__last_filename_dest}\"... \nWait please", 2)
             return
         else:
+            self.show_msg("")
             self.set_en_de_Mutex(True)
             try:
                 path_in = self.__file_src_text.text()
@@ -150,6 +158,10 @@ class FileTransferWidget(QWidget):
                     return
                 path_in = os.path.abspath(path_in)
                 path_out = os.path.abspath(path_out)
+                if(path_in == path_out):
+                    ifMsg(self, f"The same name \"{path_in}\" and \"{path_out}\"", 4)
+                    self.set_en_de_Mutex(False)
+                    return
                 self.__last_filename_src, self.__last_filename_dest, self.cipher_mode = path_in, path_out, "encrypted"
 
                 cipher_key = self.__pswd.get_password()
@@ -176,6 +188,7 @@ class FileTransferWidget(QWidget):
                     self.set_en_de_Mutex(False)
                     return
                 
+                self.show_msg(f"Encrypting {path_in} to {path_out}")
                 x = threading.Thread(target=thread_func, args=(self, cipher, False, path_in, path_out,))
                 x.start()
                 ifMsg(self, f"File {path_in} started ecrypted to {path_out}. It may take some time...", 2)
@@ -187,11 +200,11 @@ class FileTransferWidget(QWidget):
                 self.set_en_de_Mutex(False)
 
     def __decrypt_button_handler(self):
-        self.__info_msg_label.setText("")
         if(self.__xcrypt_button_mutex == True):
             ifMsg(self, f"File \"{self.__last_filename_src}\" is still being {self.cipher_mode} \nto \"{self.__last_filename_dest}\"... \nWait please", 2)
             return
         else:
+            self.__info_msg_label.setText("")
             self.set_en_de_Mutex(True)
             try:
                 path_in = self.__file_src_text.text()
@@ -206,6 +219,10 @@ class FileTransferWidget(QWidget):
                     return
                 path_in = os.path.abspath(path_in)
                 path_out = os.path.abspath(path_out)
+                if(path_in == path_out):
+                    ifMsg(self, f"The same name \"{path_in}\" and \"{path_out}\"", 4)
+                    self.set_en_de_Mutex(False)
+                    return
                 self.__last_filename_src, self.__last_filename_dest, self.cipher_mode = path_in, path_out, "encrypted"
 
                 cipher_key = self.__pswd.get_password()
@@ -232,6 +249,7 @@ class FileTransferWidget(QWidget):
                     self.set_en_de_Mutex(False)
                     return
                 
+                self.show_msg(f"Decrypting {path_in} to {path_out}")
                 x = threading.Thread(target=thread_func, args=(self, cipher, True, path_in, path_out,))
                 x.start()
                 ifMsg(self, f"File {path_in} started derypted to {path_out}. It may take some time...", 2)

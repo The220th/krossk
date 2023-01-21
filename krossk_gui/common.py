@@ -8,7 +8,7 @@ from io import BytesIO
 from PyQt5 import (QtCore, QtGui)
 from PyQt5.QtGui import QIcon, QPixmap, QImage
 from PyQt5.QtWidgets import (QWidget, QLabel, QCheckBox, QTextEdit, QLineEdit, QPushButton,
-    QFrame, QApplication, QMessageBox, QDialog, QGridLayout, QComboBox, QFileDialog, QStackedWidget)
+    QFrame, QApplication, QMessageBox, QDialog, QGridLayout, QComboBox, QFileDialog, QStackedWidget, QGroupBox)
 
 from krossk_crypto import gen_password
 
@@ -62,10 +62,15 @@ def exe_widget_in_QDialog(parent, widget: "QWidget", MODAL: bool = True):
 
 class PasswordWidget(QWidget):
 
-    def __init__(self, parent):
+    def __init__(self, parent, label_txt: str = None):
         super().__init__(parent)
 
         self.__grid = QGridLayout()
+        self.__grid_main = QGridLayout()
+        self.__groupbox = QGroupBox(self)
+        self.__groupbox.setLayout(self.__grid)
+        self.__groupbox.setStyleSheet("QGroupBox {  border: 1px solid black;}")
+        self.__grid_main.addWidget(self.__groupbox, 0, 0, 1, 1)
 
         self.__password_text = QLineEdit(self)
         self.__password_text.setReadOnly(False)
@@ -83,12 +88,21 @@ class PasswordWidget(QWidget):
         copy_button_h = self.__copy_button.size().height()
         self.__copy_button.setMaximumSize(QtCore.QSize(25, copy_button_h))
 
-        self.__grid.addWidget(self.__password_text, 0, 0, 1, 1)
-        self.__grid.addWidget(self.__copy_button, 0, 1, 1, 1)
-        self.__grid.addWidget(self.__passwd_echo_checkbox, 0, 2, 1, 1)
-        self.__grid.addWidget(self.__rnd_passwd_button, 0, 3, 1, 1)
+        if(label_txt == None):
+            self.__grid.addWidget(self.__password_text, 0, 0, 1, 1)
+            self.__grid.addWidget(self.__copy_button, 0, 1, 1, 1)
+            self.__grid.addWidget(self.__passwd_echo_checkbox, 0, 2, 1, 1)
+            self.__grid.addWidget(self.__rnd_passwd_button, 0, 3, 1, 1)
+        else:
+            self.__passwd_label = QLabel(label_txt, self)
+            self.__passwd_label.setAlignment(QtCore.Qt.AlignRight | QtCore.Qt.AlignVCenter)
+            self.__grid.addWidget(self.__passwd_label, 0, 0, 1, 1)
+            self.__grid.addWidget(self.__password_text, 0, 1, 1, 1)
+            self.__grid.addWidget(self.__copy_button, 0, 2, 1, 1)
+            self.__grid.addWidget(self.__passwd_echo_checkbox, 0, 3, 1, 1)
+            self.__grid.addWidget(self.__rnd_passwd_button, 0, 4, 1, 1)
 
-        self.setLayout(self.__grid)
+        self.setLayout(self.__grid_main)
     
     def get_password(self) -> str:
         return self.__password_text.text()

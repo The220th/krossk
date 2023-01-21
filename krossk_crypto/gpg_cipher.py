@@ -127,7 +127,7 @@ class gpg_cipher(ICipher):
     def check_gpg_insystem_exists(self):
         try:
             com_out = exe(["gpg", "--version"], "")
-            print(com_out)
+            #print(com_out)
             if(com_out[0].find("gpg (GnuPG)") != -1):
                 return True
             else:

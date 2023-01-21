@@ -13,16 +13,41 @@ Transfer encrypted msgs CROSS unsafe messengers.
 ``` bash
 > python -m ensurepip --upgrade # установка pip, если его нет
 
-> pip3 install --upgrade pip
-> pip3 install -r requirements.txt
+> pip install --upgrade pip
+> pip install -r requirements.txt
 ```
 
-# Планируемый функционал
+# Компиляция одного исполняемого файла
 
-Обмен вручную ключами шифрования.
+``` bash
+> git clone https://github.com/The220th/krossk
+> cd krossk
+> python -m venv new_venv
 
-Шифрование сообщений pycrypto:AES-256-CBC или gpg:AES-256.
+> source ./new_venv/bin/activate  # GNU/Linux
+> .\new_venv\Scripts\activate.bat # Windows
 
-Шифрование файлов pycrypto:AES-256-CBC или gpg:AES-256.
+> pip freeze > requirements_for_delete.txt
+> pip uninstall -r requirements_for_delete.txt -y
 
-Возможно шифрование сообщений, получая ключи с помощью KDF.
+> pip install --upgrade pip
+> pip install -r requirements.txt
+> pip install pyinstaller
+
+> pyinstaller --onefile --paths=new_venv/lib64/python3.10/site-packages/:new_venv/lib/python3.10/site-packages/ krossk.py # GNU/Linux
+> pyinstaller --onefile --paths=new_venv\Lib\site-packages --windowed krossk.py # Windows
+
+# В директории dist будет лежать исполняемый файл
+```
+
+# Запуск
+
+Либо скачайте исполняемый файл из [релизов https://github.com/The220th/krossk/releases](https://github.com/The220th/krossk/releases) и запустите его. 
+
+Либо:
+
+``` bash
+> git clone https://github.com/The220th/krossk
+> cd krossk
+> python krossk.py
+```
