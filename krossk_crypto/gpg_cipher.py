@@ -8,9 +8,9 @@ import hashlib
 
 from . import ICipher
 
-def calc_sha256(s: str) -> str:
+def calc_sha512(s: str) -> str:
     bs = s.encode("utf-8")
-    m = hashlib.sha256()
+    m = hashlib.sha512()
     m.update(bs)
     res = m.hexdigest()
     return res
@@ -51,13 +51,24 @@ def print_gpg_error(comm_out: tuple):
 
 class gpg_cipher(ICipher):
 
-    def __init__(self, key: str):
+    def __init__(self, key: str, algo: str = None):
+        """example: gpg_cipher("key", "AES256")"""
         self.__cenz = "***"
-        self.key = calc_sha256(key)
+        self.__key = calc_sha512(key)
+        self.__algo = algo
 
     def encrypt_msg(self, msg: str) -> str:
-        command = ["gpg", "--batch", "--yes", "--cipher-algo", "AES256", "--passphrase", f"\"{self.key}\"", "--armor", "--symmetric", "-"]
-        command_out = ["gpg", "--batch", "--yes", "--cipher-algo", "AES256", "--passphrase", f"\"{self.__cenz}\"", "--armor", "--symmetric", "-"]
+        #command = ["gpg", "--batch", "--yes", "--cipher-algo", "AES256", "--passphrase", f"\"{self.__key}\"", "--armor", "--symmetric", "-"]
+        #command_out = ["gpg", "--batch", "--yes", "--cipher-algo", "AES256", "--passphrase", f"\"{self.__cenz}\"", "--armor", "--symmetric", "-"]
+        command = ["gpg", "--batch", "--yes", "--s2k-mode", "3", "--s2k-count", "65011712", "--s2k-digest-algo", "SHA512", "--s2k-cipher-algo", self.__algo, "--passphrase", f"\"{self.__key}\"", "--armor", "--symmetric", "-"]
+        command_out = ["gpg", "--batch", "--yes", "--s2k-mode", "3", "--s2k-count", "65011712", "--s2k-digest-algo", "SHA512", "--s2k-cipher-algo", self.__algo, "--passphrase", f"\"{self.__cenz}\"", "--armor", "--symmetric", "-"]
+        if(self.__algo == None):
+            index = command.index("--s2k-cipher-algo")
+            del command[index]
+            del command[index]
+            del command_out[index]
+            del command_out[index]
+
         print(f"> ", end="")
         print(*command_out)
 
@@ -72,7 +83,7 @@ class gpg_cipher(ICipher):
 
     def decrypt_msg(self, en_msg: str) -> str:
         stdin_msg = f"-----BEGIN PGP MESSAGE-----\n{en_msg}\n-----END PGP MESSAGE-----\n"
-        command = ["gpg", "--decrypt", "--batch", "--passphrase", f"\"{self.key}\"", "-"]
+        command = ["gpg", "--decrypt", "--batch", "--passphrase", f"\"{self.__key}\"", "-"]
         command_out = ["gpg", "--decrypt", "--batch", "--passphrase", f"\"{self.__cenz}\"", "-"]
         print(f"> ", end="")
         print(*command_out)
@@ -84,6 +95,7 @@ class gpg_cipher(ICipher):
             print_gpg_error(com_out)
             raise RuntimeError("GPG ERROR. Invalid key?")
         if(res == ""):
+            print_gpg_error(com_out)
             raise RuntimeError("GPG ERROR. Invalid key?")
         return res
 
@@ -93,12 +105,22 @@ class gpg_cipher(ICipher):
         de_src_abs = os.path.abspath(de_src)
         en_src_abs = os.path.abspath(en_src)
 
-        command = ["gpg", "--output", f"{en_src}", "--batch", "--yes", "--cipher-algo", "AES256", "--passphrase", f"\"{self.key}\"", "--armor", "--symmetric", f"{de_src_abs}"]
-        command_out = ["gpg", "--output", f"{en_src}", "--batch", "--yes", "--cipher-algo", "AES256", "--passphrase", f"\"{self.__cenz}\"", "--armor", "--symmetric", f"{de_src_abs}"]
+        #command = ["gpg", "--output", f"{en_src}", "--batch", "--yes", "--s2k-cipher-algo", "AES256", "--passphrase", f"\"{self.__key}\"", "--symmetric", f"{de_src_abs}"]
+        #command_out = ["gpg", "--output", f"{en_src}", "--batch", "--yes", "--s2k-cipher-algo", "AES256", "--passphrase", f"\"{self.__cenz}\"", "--symmetric", f"{de_src_abs}"]
+        command = ["gpg", "--output", f"{en_src}", "--batch", "--yes", "--s2k-mode", "3", "--s2k-count", "65011712", "--s2k-digest-algo", "SHA512", "--s2k-cipher-algo", self.__algo, "--passphrase", f"\"{self.__key}\"", "--symmetric", f"{de_src_abs}"]
+        command_out = ["gpg", "--output", f"{en_src}", "--batch", "--yes", "--s2k-mode", "3", "--s2k-count", "65011712", "--s2k-digest-algo", "SHA512", "--s2k-cipher-algo", self.__algo, "--passphrase", f"\"{self.__cenz}\"", "--symmetric", f"{de_src_abs}"]
+        if(self.__algo == None):
+            index = command.index("--s2k-cipher-algo")
+            del command[index]
+            del command[index]
+            del command_out[index]
+            del command_out[index]
+        
         print(f"> ", end="")
         print(*command_out)
 
         com_out = exe(command, "", False)
+        print(com_out)
         if(com_out[0] == ""):
             print("gpg encrypt file: ok")
         else:
@@ -111,7 +133,7 @@ class gpg_cipher(ICipher):
         en_src_abs = os.path.abspath(en_src)
         de_src_abs = os.path.abspath(de_src)
 
-        command = ["gpg", "--output", f"{de_src}", "--decrypt", "--batch", "--yes", "--passphrase", f"\"{self.key}\"", f"{en_src}"]
+        command = ["gpg", "--output", f"{de_src}", "--decrypt", "--batch", "--yes", "--passphrase", f"\"{self.__key}\"", f"{en_src}"]
         command_out = ["gpg", "--output", f"{de_src}", "--decrypt", "--batch", "--yes", "--passphrase", f"\"{self.__cenz}\"", f"{en_src}"]
         print(f"> ", end="")
         print(*command_out)

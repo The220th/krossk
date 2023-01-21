@@ -68,7 +68,7 @@ class SymmetricCommunicationWidget(QWidget):
 
 class OneSymmetricCommunicationWidget(QWidget):
 
-    __ciphers_list = ["PyCA Fernet AES128-cbc", "gpg AES256", "kaes256CBC"] # порядок не менять! 
+    __ciphers_list = ["PyCA Fernet AES128-cbc", "GPG AES256", "GPG default", "kaes256CBC"] # порядок не менять! 
 
     def __init__(self, parent, communication_name: str):
         super().__init__(parent)
@@ -145,8 +145,8 @@ class OneSymmetricCommunicationWidget(QWidget):
         self.setLayout(self.__grid)
 
     def __ciphers_combo_handler(self, text: str):
-        if(text == self.__ciphers_list[1]):
-            gpg_cipher_test = gpg_cipher("123")
+        if(text == self.__ciphers_list[1] or text == self.__ciphers_list[2]):
+            gpg_cipher_test = gpg_cipher("123", "AES256")
             if(gpg_cipher_test.check_gpg_insystem_exists() == False):
                 ifMsg(self, "gpg is not installed! ", 4)
                 self.__ciphers_combo.setCurrentIndex(self.__ciphers_combo_prev_index)
@@ -175,8 +175,10 @@ class OneSymmetricCommunicationWidget(QWidget):
         if(cipher_combo_text == self.__ciphers_list[0]):
             cipher = Pyca_Fernet(cipher_key)
         elif(cipher_combo_text == self.__ciphers_list[1]):
-            cipher = gpg_cipher(cipher_key)
+            cipher = gpg_cipher(cipher_key, "AES256")
         elif(cipher_combo_text == self.__ciphers_list[2]):
+            cipher = gpg_cipher(cipher_key)
+        elif(cipher_combo_text == self.__ciphers_list[3]):
             cipher = kaes256CBC(cipher_key)
         else:
             ifMsg(self, "Failed successfully. ", 4)
@@ -216,8 +218,10 @@ class OneSymmetricCommunicationWidget(QWidget):
         if(cipher_combo_text == self.__ciphers_list[0]):
             cipher = Pyca_Fernet(cipher_key)
         elif(cipher_combo_text == self.__ciphers_list[1]):
-            cipher = gpg_cipher(cipher_key)
+            cipher = gpg_cipher(cipher_key, "AES256")
         elif(cipher_combo_text == self.__ciphers_list[2]):
+            cipher = gpg_cipher(cipher_key)
+        elif(cipher_combo_text == self.__ciphers_list[3]):
             cipher = kaes256CBC(cipher_key)
         else:
             ifMsg(self, "Failed successfully. ", 4)

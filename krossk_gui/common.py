@@ -297,6 +297,16 @@ def ico_get_paste() -> "QIcon":
     icon = QIcon(pixmap)
     return icon
 
+def ico_get_question() -> "QIcon":
+    imageBytes = imageBytes = b"\x89\x50\x4e\x47\x0d\x0a\x1a\x0a\x00\x00\x00\x0d\x49\x48\x44\x52\x00\x00\x00\x15\x00\x00\x00\x15\x08\x06\x00\x00\x00\xa9\x17\xa5\x96\x00\x00\x00\x09\x70\x48\x59\x73\x00\x00\x0e\xc4\x00\x00\x0e\xc4\x01\x95\x2b\x0e\x1b\x00\x00\x00\x7a\x49\x44\x41\x54\x38\x8d\xc5\xd3\x4b\x0a\xc0\x20\x0c\x04\xd0\x49\xf1\xde\xd5\x93\xa7\x8b\x52\x14\xf1\x33\x53\xb4\x9d\x8d\x08\xfa\x34\x41\x81\x0d\xb1\x7b\x88\xbe\x8e\x8c\x16\xf2\xe4\x5c\x00\x26\x00\x40\x98\xac\x82\x57\x35\x98\xcd\xe9\x83\x01\xcd\x32\x56\x1f\x22\xa1\x25\xf8\x84\x85\x87\x37\x6d\x85\x81\x87\x28\xd3\x3f\x09\xed\x81\xad\xb6\xd0\xe8\x5b\x50\x42\x59\x90\x46\x15\x90\x46\xd5\x6c\x41\xa7\xdf\x14\xd0\x9f\xd6\x7f\xe5\xbb\x73\x7f\x5e\x42\xd5\x6c\xe9\x69\x81\x26\x6d\xe7\xd7\xb9\x00\x4a\x69\x1b\xb5\x7d\x2a\xc1\x9e\x00\x00\x00\x00\x49\x45\x4e\x44\xae\x42\x60\x82"
+    stream = BytesIO(imageBytes)
+    image = PIL_Image.open(stream).convert("RGBA")
+    stream.close()
+    image_image_qt = PIL_ImageQt.ImageQt(image)
+    pixmap = QPixmap.fromImage(image_image_qt)
+    icon = QIcon(pixmap)
+    return icon
+
 def ico_get_main() -> "QIcon":
     svg_str="""<?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <svg
@@ -408,17 +418,8 @@ def ico_get_main() -> "QIcon":
        transform="matrix(1.0549438,0,0,1.1013322,-8.6026514,-30.393528)">
       <path
          d="m 127.85,247.04 c -12.56,2.28 -25.89,8.79 -34.76,17 -4.72,4.36 -6.06,7.62 -6.06,14.72 0,10.99 6.55,18.28 23.05,25.56 33.93716,11.66191 45.0195,9.98436 45.0195,9.98436 -0.26532,7.07212 0.1405,-3.43436 0.5905,-17.34436 0.28,-8.8 -0.15,-15.75 -0.95,-15.46 -0.81,0.31 -2.38,0.55 -3.51,0.55 -3.09,0 -7.07,-21.74 -5.5,-30.1 1.57,-8.39 1.43,-8.42 -17.85,-4.93"
-         fill="null"
-         fill-opacity="null"
          id="svg_14"
-         stroke="null"
-         stroke-dasharray="none"
-         stroke-linecap="null"
-         stroke-linejoin="null"
-         stroke-opacity="null"
-         stroke-width="null"
-         style="fill:#ac9393;stroke:none"
-         sodipodi:nodetypes="ccsccccscc" />
+         style="fill:#ac9393;stroke:none"/>
     </g>
     <g
        fill="#C8DCC8FF"

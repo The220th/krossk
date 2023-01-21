@@ -256,7 +256,10 @@ class one_KeyExchangeWidget(QWidget):
     def __deKeys_button_handler(self):
         en_key_text = self.__encrypted_key_text_in.text()
         if(en_key_text == ""):
-            ifMsg(self, "Encrypted passphrase is empty. Please fill it", 4)
+            if(self.__algo_num == 2):
+                ifMsg(self, "Encrypted passphrase is empty. Please fill it", 4)
+            else:
+                ifMsg(self, "Public key from the second party is empty. Please fill it", 4)
             return
         try:
             if(self.__algo_num == 1):

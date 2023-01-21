@@ -6,15 +6,9 @@ from PyQt5.QtWidgets import QApplication
 
 from krossk_gui import MainWidget, ico_get_main
 
-KROSSK_VERSION = "V0.95"
+KROSSK_VERSION = "V0.97"
 
-# TODO: svg
 
-# TODO: groupbox add?
-
-# TODO: symmetric communication up-down, down-up?
-
-# TODO: add extentions?
 
 def flags_react(args: list):
     argc = len(args)
