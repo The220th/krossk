@@ -6,7 +6,7 @@ from PyQt5.QtWidgets import QApplication
 
 from krossk_gui import MainWidget, ico_get_main
 
-KROSSK_VERSION = "V0.97"
+KROSSK_VERSION = "V1.00"
 
 
 

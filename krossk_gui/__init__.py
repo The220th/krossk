@@ -10,6 +10,7 @@ from .common import ico_get_main, ico_get_chat, ico_get_chat_in, ico_get_chat_ou
 from .key_exchange_widget import KeyExchangeWidget
 from .symmetric_communication import SymmetricCommunicationWidget
 from .file_transfer import FileTransferWidget
+from .help_widget import HelpWidget
 
 
 
@@ -21,5 +22,6 @@ __all__ = [
     "KeyExchangeWidget",
     "SymmetricCommunicationWidget",
     "FileTransferWidget",
+    "HelpWidget",
     "ico_get_main", "ico_get_chat", "ico_get_chat_in", "ico_get_chat_out", "ico_get_file", "ico_get_question"
     ]
