@@ -65,6 +65,8 @@ English documentation can be viewed [here](./README_en.md).
 
 # Использование
 
+Нужно сказать, что использование программы на свой страх и риск.
+
 Предположим такую ситуацию:
 
 Алиса и Боб хотят обменяться сообщениями через мессенджер. Причём они могут обмениваться сообщениями ТОЛЬКО через этот мессенджер (они не могут лично встретиться). Также Алиса и Боб знают, что каждое их сообщение читает Ева. Как Алисе и Бобу обмениваться сообщениями? Эта программа поможет решить эту проблему.
@@ -147,7 +149,7 @@ English documentation can be viewed [here](./README_en.md).
 Правее можно выбрать алгоритм симметричного шифрования. В `krossk` доступны 4 варианта:
 - [PyCA Fernet AES128-cbc](https://github.com/pyca/cryptography/blob/main/src/cryptography/fernet.py) `Fernet` - это [спецификация](https://github.com/fernet/spec/). 
 
-- [GPG AES256](https://dev.gnupg.org/source/gnupg/).
+- [GPG AES256](https://dev.gnupg.org/source/gnupg/). Программу `GPG` нужно установить отдельно. На Windows могут наблюдаться проблемы, связанные с кодировкой. 
 
 - [GPG default](https://dev.gnupg.org/source/gnupg/). `GPG AES256` и `GPG default` отличаются только параметром `--s2k-cipher-algo`. В `GPG AES256` он равен `AES256`, а в `GPG default` он пустой.
 
@@ -178,7 +180,7 @@ English documentation can be viewed [here](./README_en.md).
 
 - [PyCA Fernet AES128-cbc](https://github.com/pyca/cryptography/blob/main/src/cryptography/fernet.py).
 
-- [GPG AES256](https://dev.gnupg.org/source/gnupg/).
+- [GPG AES256](https://dev.gnupg.org/source/gnupg/). Программу `GPG` нужно установить отдельно. На Windows могут наблюдаться проблемы, связанные с кодировкой. 
 
 - [GPG default](https://dev.gnupg.org/source/gnupg/). `GPG AES256` и `GPG default` отличаются только параметром `--s2k-cipher-algo`. В `GPG AES256` он равен `AES256`, а в `GPG default` он пустой.
 

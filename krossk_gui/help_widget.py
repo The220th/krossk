@@ -51,6 +51,8 @@ class HelpWidget(QWidget):
 
 <h3>Исходный код и полный README.md доступны тут: https://github.com/The220th/krossk</h3>
 
+<p>Нужно сказать, что использование программы на свой страх и риск.</p>
+
 <pre>
 Предположим такую ситуацию:
 Алиса и Боб хотят обменяться сообщениями через мессенджер.
@@ -178,6 +180,8 @@ class HelpWidget(QWidget):
 * Fernet - это спецификация: https://github.com/fernet/spec/ 
 * "GPG AES256" и "GPG default" отличаются только параметром "--s2k-cipher-algo". 
               В "GPG AES256" он равен "AES256", а в "GPG default" он пустой.
+Программу "GPG" нужно установить отдельно. 
+На Windows могут наблюдаться проблемы, связанные с кодировкой. 
 
 Ещё правее можно будет посмотреть логи ("переписку"). Для этого нажмите кнопку "View logs". 
 Если ни одного сообщения ещё не было зашифровано/расшифровано, то логи ("переписка") будут пустые. 
@@ -255,6 +259,8 @@ class HelpWidget(QWidget):
 <html>
 
 <h3>Source code and full README.md available here: https://github.com/The220th/krossk</h3>
+
+<p>Must say that the use of the program is at your own risk.</p>
 
 <pre>
 Example:
@@ -382,6 +388,7 @@ In the window on the top right, in the drop-down menu, you can select the symmet
 * Fernet: https://github.com/fernet/spec/
 * "GPG AES256" and "GPG default" differ only in the parameter "--s2k-cipher-algo".
               In "GPG AES256" it is equal to "AES256", and in "GPG default" it is empty.
+"GPG" needs to be installed separately. There may be encoding issues on Windows.
 
 The "View logs" button allows you to see the history of encrypted/decrypted messages.
 If no messages have been encrypted/decrypted yet, the logs ("correspondence") will be empty.

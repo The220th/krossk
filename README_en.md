@@ -63,6 +63,8 @@ Dependencies `Python`:
 
 # Usage
 
+Must say that the use of the program is at your own risk.
+
 Example:
 
 Alice and Bob want to exchange messages using some messenger. Moreover, they can exchange messages ONLY through this messenger (they cannot meet in person). Alice and Bob also know that Eve reads their every message. How can Alice and Bob exchange messages so that Eve can't read them? This program will help solve this problem. 
@@ -159,7 +161,8 @@ Additions:
 
 * [Fernet](https://github.com/fernet/spec/).
 
-* `GPG AES256` and `GPG default` differ only in the parameter `--s2k-cipher-algo`. In `GPG AES256` it is equal to `AES256`, and in `GPG default` it is empty.
+* `GPG AES256` and `GPG default` differ only in the parameter `--s2k-cipher-algo`. In `GPG AES256` it is equal to `AES256`, and in `GPG default` it is empty. `GPG` needs to be installed separately.
+There may be encoding issues on Windows.
 
 The `View logs` button allows you to see the history of encrypted/decrypted messages. If no messages have been encrypted/decrypted yet, the logs ("correspondence") will be empty. All data is deleted after the program is closed. Therefore, you will need to save it manually if necessary. 
 
@@ -197,7 +200,8 @@ Additions:
 
 * [Fernet](https://github.com/fernet/spec/).
 
-* `GPG AES256` and `GPG default` differ only in the parameter `--s2k-cipher-algo`. In `GPG AES256` it is equal to `AES256`, and in `GPG default` it is empty.
+* `GPG AES256` and `GPG default` differ only in the parameter `--s2k-cipher-algo`. In `GPG AES256` it is equal to `AES256`, and in `GPG default` it is empty. `GPG` needs to be installed separately.
+There may be encoding issues on Windows.
 
 * `kaes256CBC` will run very slowly. Encrypt small files with it.
 
