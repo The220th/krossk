@@ -18,6 +18,8 @@ English documentation can be viewed [here](./README_en.md).
 
 - Windows: [https://gpg4win.org/download.html](https://gpg4win.org/download.html).
 
+Если `GPG` не работает, то скорее всего проблема с кодировкой windows. [Здесь решение: https://github.com/The220th/krossk/issues/1](https://github.com/The220th/krossk/issues/1).
+
 Зависимости `Python`:
 
 ``` bash
