@@ -50,9 +50,16 @@ Dependencies `Python`:
 
 # Launch
 
-Либо скачайте исполняемый файл из [релизов](https://github.com/The220th/krossk/releases) и запустите его. 
+Download the executable file from [releases](https://github.com/The220th/krossk/releases) and launch it. 
 
-Либо:
+or
+
+``` bash
+# ~/.local/bin/ must be in PATH
+> wget -qO- https://github.com/The220th/krossk/releases/download/V1.00/krossk-V1.01-linux-amd64.tar.gz | tar -C "$HOME/.local/bin/" -xvz
+```
+
+or:
 
 ``` bash
 > git clone https://github.com/The220th/krossk

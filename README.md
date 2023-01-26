@@ -59,6 +59,13 @@ English documentation can be viewed [here](./README_en.md).
 Либо:
 
 ``` bash
+# ~/.local/bin/ must be in PATH
+> wget -qO- https://github.com/The220th/krossk/releases/download/V1.00/krossk-V1.01-linux-amd64.tar.gz | tar -C "$HOME/.local/bin/" -xvz
+```
+
+Или так:
+
+``` bash
 > git clone https://github.com/The220th/krossk
 > cd krossk
 > pip install -r requirements.txt
